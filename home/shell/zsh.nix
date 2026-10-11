@@ -46,7 +46,7 @@ in
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
-      PATH = "$HOME/.cargo/bin${lib.optionalString isEevee ":/usr/local/sbin:/usr/sbin:/sbin"}:$PATH";
+      PATH = "$HOME/.cargo/bin:$PATH";
     } // lib.optionalAttrs isDarwin {
       CPPFLAGS = "-I/opt/homebrew/opt/openjdk/include";
       HOMEBREW_CELLAR = "/opt/homebrew/Cellar";
