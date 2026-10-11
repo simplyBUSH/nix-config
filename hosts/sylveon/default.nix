@@ -5,7 +5,7 @@ let
 in
 {
   imports = [ ./hardware-configuration.nix ];
-  home-manager.extraSpecialArgs = { inherit accent };
+  home-manager.extraSpecialArgs = { inherit accent; };
 
   environment.systemPackages = with pkgs; [
     efibootmgr
@@ -91,6 +91,7 @@ in
       publish.enable = true;
       publish.userServices = true;
     };
+  };
 
   hardware = {
     graphics = {
@@ -119,4 +120,4 @@ in
       systemd-boot.enable = true;
     };
   };
-}
+ }
