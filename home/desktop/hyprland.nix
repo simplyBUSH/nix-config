@@ -10,7 +10,7 @@
       "$term" = "alacritty";
       monitor = ", preferred, auto, 1";
       exec-once = [ 
-          "swaybg -i /home/bush/Pictures/wallpaper.png -m fill"
+          "swaybg -i ${../../resources/pictures/wallpaper.png} -m fill"
         ];
       cursor = {
         no_hardware_cursors = true;

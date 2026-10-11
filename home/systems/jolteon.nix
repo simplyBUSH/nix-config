@@ -5,6 +5,7 @@
     ../shell
     ../cli
     ../gaming
+    ../desktop
   ];
 
   home.username = "bush";
