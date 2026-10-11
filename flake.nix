@@ -19,6 +19,7 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager, nixos-hardware, chaotic, ... }: {
     darwinConfigurations."glaceon" = nix-darwin.lib.darwinSystem {
+      specialArgs = { inherit inputs; };
       modules = [
         ./hosts/glaceon
         home-manager.darwinModules.home-manager
@@ -40,7 +41,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs };
+          home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users.bush = import ./home/systems/jolteon.nix;
           home-manager.backupFileExtension = "backup";
         }
