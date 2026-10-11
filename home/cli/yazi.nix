@@ -14,10 +14,8 @@
       unar                # archive preview/extraction
       poppler-utils       # PDF preview
       imagemagick         # image conversion / preview fallback
-      ripgrep             # file content search (bound to 's' below)
       fd                  # fast find (used internally)
       zoxide              # directory jumping (bound to 'z' below)
-      fzf                 # fuzzy finder (bound to 'f' below)
     ];
 
     # ── yazi.toml ──────────────────────────────────────────────────────────

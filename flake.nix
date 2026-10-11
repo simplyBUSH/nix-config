@@ -25,7 +25,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.bush = import ./home/defaults/glaceon.nix;
+          home-manager.users.bush = import ./home/systems/glaceon.nix;
           home-manager.backupFileExtension = "backup";
         }
       ];
@@ -40,44 +40,28 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; isEevee = false; };
-          home-manager.users.bush = import ./home/defaults/jolteon.nix;
+          home-manager.extraSpecialArgs = { inherit inputs };
+          home-manager.users.bush = import ./home/systems/jolteon.nix;
           home-manager.backupFileExtension = "backup";
         }
         chaotic.nixosModules.default
       ];
     };
 
-    nixosConfigurations."espeon" = nixpkgs.lib.nixosSystem {
+    nixosConfigurations."sylveon" = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
-        ./hosts/espeon
+        ./hosts/sylveon
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; isEevee = false; };
-          home-manager.users.bush = import ./home/defaults/espeon.nix;
+          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.users.bush = import ./home/systems/sylveon.nix;
           home-manager.backupFileExtension = "backup";
         }
-      ];
-    };
-
-    homeConfigurations."bush@eevee" = home-manager.lib.homeManagerConfiguration {
-      pkgs = import nixpkgs {
-        system = "aarch64-linux";
-        config.allowUnfree = true;
-      };
-      
-      extraSpecialArgs = { 
-        inherit inputs; 
-        accent = "#8B4513"; 
-        isEevee = true; 
-      };
-      
-      modules = [
-        ./home/defaults/eevee.nix
+        chaotic.nixosModules.default
       ];
     };
   };

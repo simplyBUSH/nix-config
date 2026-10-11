@@ -19,7 +19,6 @@
 
       image_preview.protocol = {
         type = "halfblocks";
-#        size = {          height = 65;          width = 180;        };
       };
 
       notifications = {

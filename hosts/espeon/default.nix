@@ -1,11 +1,11 @@
 { pkgs, ... }:
 
 let
-  accent = "#D582D0";
+  accent = "#F5AAB9";
 in
 {
   imports = [ ./hardware-configuration.nix ];
-  home-manager.extraSpecialArgs = { inherit accent; isJolteon = true; };
+  home-manager.extraSpecialArgs = { inherit accent };
 
   environment.systemPackages = with pkgs; [
     efibootmgr
@@ -21,21 +21,7 @@ in
 
   networking = {
   hostName = "espeon";
-  networkmanager = {
-    enable = true;
-    ensureProfiles.profiles = {
-      "Wired connection 1" = {
-        connection = {
-          id = "Wired connection 1";
-          type = "ethernet";
-          interface-name = "enp7s0";
-        };
-        ipv4.method = "auto";
-        ipv6.addr-gen-mode = "default";
-        ipv6.method = "auto";
-      };
-    };
-  };
+  networkmanager = { enable = true; };
   firewall.trustedInterfaces = [ "tailscale0" ];
 };
 
@@ -55,12 +41,56 @@ in
 
   programs ={
     dconf.enable = true;
+    hyprland ={
+      enable = true;
+      xwayland.enable = true;
+    };
+    steam.enable = true;
+    xwayland.enable = true;
     zsh.enable = true;
   };
 
   services = {
+    blueman.enable = true;
     openssh.enable = true;
     tailscale.enable = true;
+
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+    };
+
+    greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+          user = "greeter";
+          };
+        };
+      };
+
+    keyd = {
+      enable = true; 
+      keyboards = {
+        default = {
+          ids = [ "*" ]; 
+          settings = {
+            main = {
+              capslock = "leftmeta";
+            };
+          };
+        };
+      };
+    };
+
+    avahi = {
+      enable = true;
+      publish.enable = true;
+      publish.userServices = true;
+    };
 
   hardware = {
     graphics = {
@@ -69,6 +99,11 @@ in
       extraPackages = with pkgs; [
       mesa.opencl
       ];
+    };
+
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
     };
 
     uinput.enable = true;

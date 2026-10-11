@@ -2,16 +2,9 @@
 
 {
   imports = [
-    ../zsh.nix
-    ../git.nix
-    ../yazi.nix
-    ../kitty.nix
-    ../alacritty.nix
-    ../tmux.nix
-    ../nvim.nix
-    ../hyprland.nix
-    ../wofi.nix
-    ../iamb.nix
+    ../shell
+    ../cli
+    ../gaming
   ];
 
   home.username = "bush";
@@ -19,31 +12,11 @@
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
-    btop
-    curl
-    element-desktop
-    eza
-    fastfetch
-    fd
-    ffmpeg
     firefox
-    fzf
-    git
-    gping
-    hyfetch
-    jq
-    mosh
     nautilus
     r2modman
-    ripgrep
-    speedtest-cli
     spotify
     swaybg
-    tree
-    uv
-    vesktop
-    wget
-    wofi
   ];
 
   home.pointerCursor = {

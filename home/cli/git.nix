@@ -8,7 +8,7 @@
     settings = {
       user = {
         name = "Piotr Malowiecki";       
-        email = "01197368@pw.edu.pl";     
+        email = "malowiecki.piotr@gmail.com";     
       };
 
     alias = {
