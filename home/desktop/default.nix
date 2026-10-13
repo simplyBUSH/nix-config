@@ -1,7 +1,13 @@
+{ pkgs, ... }:
 {
   imports = [
-    ./sway.nix
+    ./eww.nix
     ./hyprland.nix
     ./wofi.nix
+#    ./sway.nix
+  ];
+
+  home.packages = with pkgs; [
+    swaybg
   ];
 }

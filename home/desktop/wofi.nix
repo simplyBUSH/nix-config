@@ -1,4 +1,4 @@
-{ pkgs, accent ? "#FFFF00", ... }:
+{ pkgs, accent, ... }:
 
 {
   programs.wofi = {

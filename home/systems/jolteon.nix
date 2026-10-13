@@ -2,10 +2,11 @@
 
 {
   imports = [
-    ../shell
+    ../chat
     ../cli
-    ../gaming
     ../desktop
+    ../gaming
+    ../shell
   ];
 
   home.username = "bush";
@@ -15,9 +16,7 @@
   home.packages = with pkgs; [
     firefox
     nautilus
-    r2modman
     spotify
-    swaybg
   ];
 
   home.pointerCursor = {

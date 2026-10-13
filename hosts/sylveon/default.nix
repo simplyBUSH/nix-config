@@ -20,7 +20,7 @@ in
   system.stateVersion = "25.05";
 
   networking = {
-  hostName = "espeon";
+  hostName = "sylveon";
   networkmanager = { enable = true; };
   firewall.trustedInterfaces = [ "tailscale0" ];
 };
@@ -66,7 +66,7 @@ in
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet --time --background matrix --cmd sway";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --background matrix --remember --cmd start-hyprland";
           user = "greeter";
           };
         };
