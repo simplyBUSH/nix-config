@@ -10,7 +10,7 @@
 
   home.username = "bush";
   home.homeDirectory = "/home/bush";
-  home.stateVersion = "24.11";
+  home.stateVersion = "26.05";
 
   home.packages = with pkgs; [
     firefox

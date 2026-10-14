@@ -17,7 +17,7 @@ in
   ];
 
   nixpkgs.config.allowUnfree = true;
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 
   networking = {
   hostName = "sylveon";
@@ -39,7 +39,7 @@ in
     nerd-fonts.jetbrains-mono
   ];
 
-  programs ={
+  programs = {
     dconf.enable = true;
     hyprland ={
       enable = true;
@@ -110,13 +110,23 @@ in
     uinput.enable = true;
   };
 
+  zramSwap = {
+    enable = true;
+    memoryPercent = 100;
+    algorithm = "zstd";
+    priority = 100;
+  };
+
   boot = {
-    kernelPackages = pkgs.linuxPackages_cachyos-lto-znver4;
+    kernelPackages = pkgs.linuxPackages_cachyos-lto-znver5;
     kernelParams = [ "usbcore.autosuspend=-1" ];
     initrd.kernelModules = [ "usbhid" "hid_generic" ];
+    kernel.sysctl = {
+        "vm.swappiness" = 180;
+      };
 
     loader = {
-      efi.canTouchEfiVariables = false;
+      efi.canTouchEfiVariables = true;
       systemd-boot.enable = true;
     };
   };
