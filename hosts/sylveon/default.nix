@@ -9,6 +9,7 @@ in
 
   environment.systemPackages = with pkgs; [
     efibootmgr
+    brightnessctl
   ];
 
   nix.settings.experimental-features = [
@@ -91,6 +92,9 @@ in
       publish.enable = true;
       publish.userServices = true;
     };
+    udev.packages = with pkgs; [
+      brightnessctl
+    ];
   };
 
   hardware = {
@@ -118,7 +122,7 @@ in
   };
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_cachyos-lto-znver5;
+#    kernelPackages = pkgs.linuxPackages_cachyos-lto-znver5;
     kernelParams = [ "usbcore.autosuspend=-1" ];
     initrd.kernelModules = [ "usbhid" "hid_generic" ];
     kernel.sysctl = {

@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../chat
     ../cli
     ../desktop
     ../shell

@@ -1,4 +1,4 @@
-{ pkgs, accent, ... }:
+{ pkgs, accent, osConfig, ... }:
 
 {
   wayland.windowManager.hyprland = {
@@ -22,18 +22,18 @@
       ];
 
       general = {
-        gaps_in = 4;
-        gaps_out = 4;
-        border_size = 3;
+        gaps_in = 0;
+        gaps_out = 0;
+        border_size = 0;
         "col.active_border" = "rgb(${builtins.substring 1 6 accent})";
         "col.inactive_border" = "rgb(444444)";
         layout = "dwindle";
       };
 
       decoration = {
-        rounding = 8;
+        rounding = 0;
         blur = {
-          enabled = true;
+          enabled = false;
           size = 5;
           passes = 2;
         };
@@ -58,7 +58,8 @@
 
       input = {
         follow_mouse = 1;
-        sensitivity = -0.5;
+        accel_profile = if osConfig.networking.hostName == "sylveon" then "adaptive" else "flat";
+        sensitivity = if osConfig.networking.hostName == "sylveon" then -0.1 else -0.5;
         kb_layout = "pl";
         repeat_rate = 50;
 
@@ -102,7 +103,7 @@
 
         # Layout
         "$mod ALT, space, togglefloating,"
-        "$mod ALT, F, fullscreen,"
+        "$mod, F, fullscreen,"
 
         # Apps
         "$mod, E, exec, nautilus"
@@ -119,6 +120,10 @@
 
         # Close window
         "$mod, Q, killactive,"
+
+        ", XF86Cut, exec, ${pkgs.grimblast}/bin/grimblast copy area"
+        "$mod SHIFT, S, exec, ${pkgs.grimblast}/bin/grimblast copy area"
+
       ];
 
       # Mouse binds
@@ -126,6 +131,18 @@
         "$mod, mouse:272, movewindow"
         "$mod, mouse:273, resizewindow"
       ];
+
+      bindel = [
+        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
+        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+      ];
+      bindl = [
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+     ];
     };
   };
 }

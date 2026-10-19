@@ -2,9 +2,9 @@
 {
   programs.eww = {
     enable = true;
-#    package = pkgs.eww;
+    package = pkgs.eww;
 
-#    yuckConfig = builtins.readFile ./eww/eww.yuck;
-#    scssConfig = builtins.readFile ./eww/eww.scss;
+    yuckConfig = builtins.readFile ./eww/eww.yuck;
+    scssConfig = builtins.readFile ./eww/eww.scss;
   };
 }

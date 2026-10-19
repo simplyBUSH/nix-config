@@ -1,21 +1,50 @@
 (defwindow bar
-           :monitor 0
-           :geometry (geometry :x "0%"
-                               :y "0px"
-                               :width "100%"
-                               :height "30px"
-                               :anchor "top center")
-           :stacking "fg"
-           :exclusive true
-           (box :orientation "horizontal"
-                :halign "center"
-           (clock)
-           )
+  :monitor 0
+  :geometry (geometry
+    :x "0%"
+    :y "0px"
+    :width "100%"
+    :height "30px"
+    :anchor "top center")
+  :stacking "fg"
+  :exclusive true
 
-)
+  (centerbox :class "bar"
+    :orientation "horizontal"
+    :hexpand true
+    :halign "fill"
+    (box)
+    (clock)
+    (battery)))
 
 (defpoll time :interval "1s"
-  `date "+%H:%M:%S"`)
+  `date "+%a %d %b  %H:%M"`)
 
 (defwidget clock []
-  (label :text time))
+  (label :class "clock"
+         :text time))
+
+(defvar bat_icons '{
+  "bat0": "",
+  "bat1": "",
+  "bat2": "",
+  "bat3": "",
+  "bat4": ""
+}')
+
+(defwidget battery []
+  (box :class "battery"
+       :orientation "horizontal"
+       :space-evenly false
+       :halign "end"
+       :spacing 4
+    (label :class "battery-icon"
+           :text "${EWW_BATTERY.BAT1.capacity < 20 ? bat_icons.bat0 :
+                      EWW_BATTERY.BAT1.capacity < 40 ? bat_icons.bat1 :
+                        EWW_BATTERY.BAT1.capacity < 60 ? bat_icons.bat2 :
+                          EWW_BATTERY.BAT1.capacity < 80 ? bat_icons.bat3 :
+                                                             bat_icons.bat4}")
+    (label :class "battery-arrow"
+           :text "${EWW_BATTERY.BAT1.status == 'Charging' ? '' : ''}")
+    (label :class "battery-text"
+           :text "${EWW_BATTERY.BAT1.capacity}%")))
