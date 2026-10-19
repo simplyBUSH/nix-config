@@ -4,7 +4,10 @@ let
   accent = "#F5AAB9";
 in
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    ./sleepfuckery.nix
+  ];
   home-manager.extraSpecialArgs = { inherit accent; };
 
   environment.systemPackages = with pkgs; [
@@ -19,7 +22,6 @@ in
 
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "26.05";
-
   networking = {
   hostName = "sylveon";
   networkmanager = { enable = true; };
@@ -49,6 +51,7 @@ in
     steam.enable = true;
     xwayland.enable = true;
     zsh.enable = true;
+    kdeconnect.enable = true;
   };
 
   services = {
@@ -92,6 +95,11 @@ in
       publish.enable = true;
       publish.userServices = true;
     };
+
+    tlp = {
+      enable = true;
+    };
+
     udev.packages = with pkgs; [
       brightnessctl
     ];
@@ -121,10 +129,9 @@ in
     priority = 100;
   };
 
+
   boot = {
-#    kernelPackages = pkgs.linuxPackages_cachyos-lto-znver5;
-    kernelParams = [ "usbcore.autosuspend=-1" ];
-    initrd.kernelModules = [ "usbhid" "hid_generic" ];
+    initrd.kernelModules = [ "usbhid" "hid_generic" "cpuid" ];
     kernel.sysctl = {
         "vm.swappiness" = 180;
       };

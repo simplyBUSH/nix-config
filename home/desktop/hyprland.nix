@@ -11,6 +11,8 @@
       monitor = ", preferred, auto, 1";
       exec-once = [ 
           "swaybg -i ${../../resources/pictures/wallpaper.png} -m fill"
+          "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%"
+          "eww open bar"
         ];
       cursor = {
         no_hardware_cursors = true;
@@ -132,17 +134,16 @@
         "$mod, mouse:273, resizewindow"
       ];
 
-      bindel = [
-        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
-        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
-        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"
-        ", XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0"
-        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+bindel = [
+        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+ && eww update brightness=$(brightnessctl -m | cut -d, -f4 | tr -d %)"
+        ", XF86MonBrightnessDown, exec, brightnessctl set 5%- && eww update brightness=$(brightnessctl -m | cut -d, -f4 | tr -d %)"
+        ", XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+ && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')"
       ];
       bindl = [
-        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')"
         ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
-     ];
+      ];
     };
   };
 }

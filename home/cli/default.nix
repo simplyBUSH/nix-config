@@ -15,6 +15,7 @@
     ripgrep
     speedtest-cli
     tree
+    iw
     uv
     wget
   ];

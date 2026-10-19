@@ -13,16 +13,74 @@
     :orientation "horizontal"
     :hexpand true
     :halign "fill"
-    (box)
+    (systray :class "tray"
+             :spacing 6
+             :halign "start"
+             :icon-size 16
+             :prepend-new true)
     (clock)
-    (battery)))
+    (control)))
+
+(defwindow pwr-menu
+  :monitor 0
+  :geometry (geometry
+    :x "0px"
+    :y "0px"
+    :width "110px"
+    :height "160px"
+    :anchor "top right")
+  :stacking "overlay"
+  :exclusive false
+  :focusable "ondemand"
+
+  (box :class "power-popup"
+       :orientation "vertical"
+       :spacing 8
+
+    (button :class "power-option"
+            :onclick "systemctl suspend"
+      "Sleep")
+
+    (button :class "power-option"
+            :onclick "systemctl poweroff"
+      "Shutdown")
+
+    (button :class "power-option"
+            :onclick "systemctl reboot"
+      "Reboot")
+  )
+)
+
+(defwindow calendar
+  :monitor 0
+  :geometry (geometry
+    :x "0px"
+    :y "0px"
+    :width "220px"
+    :height "160px"
+    :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable "ondemand"
+(cal)
+)
+
+(defwidget cal []
+  (box :class "cal-box" 
+       :orientation "vertical"
+    (calendar :class "cal"
+              :day {formattime(EWW_TIME, "%d")} 
+              :month {formattime(EWW_TIME, "%m")} 
+              :year {formattime(EWW_TIME, "%Y")})))
 
 (defpoll time :interval "1s"
   `date "+%a %d %b  %H:%M"`)
 
 (defwidget clock []
-  (label :class "clock"
-         :text time))
+  (button :class "pwr"
+          :onclick "eww open --toggle calendar" time)
+  )
+
 
 (defvar bat_icons '{
   "bat0": "",
@@ -32,12 +90,65 @@
   "bat4": ""
 }')
 
-(defwidget battery []
-  (box :class "battery"
+(defvar wifi_icons '{
+  "off": "󰤮", 
+  "sig0": "󰤯", 
+  "sig1": "󰤟", 
+  "sig2": "󰤢", 
+  "sig3": "󰤥", 
+  "sig4": "󰤨"
+  }')
+
+(defvar vol_icons '{
+  "muted": "󰝟", 
+  "low": "󰕿", 
+  "med": "󰖀", 
+  "high": "󰕾"
+  }')
+
+(defvar bri_icons '{
+  "low": "󰃞", 
+  "med": "󰃟", 
+  "high": "󰃠"
+  }')
+
+(defvar volume 0)
+(defvar brightness 50)
+
+(defpoll wifi_sig :interval "5s" :initial "-100"
+  "iw dev wlp192s0 link | awk '/signal:/ {s=$2} END {print s ? s : -100}'")
+(defpoll bt_status :interval "3s" :initial "blocked"
+  "rfkill -rno SOFT,HARD list bluetooth | grep -qw 'blocked' && echo 'blocked' || echo 'unblocked'")
+
+(defwidget control []
+  (box :class "center"
        :orientation "horizontal"
        :space-evenly false
        :halign "end"
        :spacing 4
+    (label :class "volume-icon"
+            :text "${volume < 0 ? vol_icons.muted :
+                       volume == 0 ? vol_icons.muted :
+                         volume < 35 ? vol_icons.low :
+                           volume < 70 ? vol_icons.med :
+                                           vol_icons.high}")
+    (label :class "volume-text"
+            :text "${volume < 0 ? 'Muted' : volume + '%'}")
+    (label :class "brightness-icon"
+            :text "${brightness < 35 ? bri_icons.low :
+                       brightness < 70 ? bri_icons.med :
+                                           bri_icons.high}")
+    (label :class "brightness-text"
+           :text "${brightness}%")
+    (label :class "wifi-icon"
+           :text "${wifi_sig <= -100 ? wifi_icons.off :
+                      wifi_sig < -80 ? wifi_icons.sig0 :
+                       wifi_sig < -70 ? wifi_icons.sig1 :
+                         wifi_sig < -60 ? wifi_icons.sig2 :
+                           wifi_sig < -50 ? wifi_icons.sig3 :
+                                              wifi_icons.sig4}")
+    (label :class "bluetooth-icon"
+           :text "${bt_status == 'unblocked' ? '󰂯' : '󰂲'}")
     (label :class "battery-icon"
            :text "${EWW_BATTERY.BAT1.capacity < 20 ? bat_icons.bat0 :
                       EWW_BATTERY.BAT1.capacity < 40 ? bat_icons.bat1 :
@@ -45,6 +156,12 @@
                           EWW_BATTERY.BAT1.capacity < 80 ? bat_icons.bat3 :
                                                              bat_icons.bat4}")
     (label :class "battery-arrow"
-           :text "${EWW_BATTERY.BAT1.status == 'Charging' ? '' : ''}")
+           :text "${EWW_BATTERY.BAT1.status == 'Charging' ? '' : 
+             EWW_BATTERY.BAT1.status == 'Discharging' ? '': '-'}")
     (label :class "battery-text"
-           :text "${EWW_BATTERY.BAT1.capacity}%")))
+           :text "${EWW_BATTERY.BAT1.capacity}%")
+    (button :class "pwr"
+            :onclick "eww open --toggle pwr-menu" "⏻")
+  )
+)
+
