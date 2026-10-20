@@ -2,7 +2,9 @@
 {
   imports = [
     ./eww.nix
+    ./hypridle.nix
     ./hyprland.nix
+    ./hyprlock.nix
     ./wofi.nix
 #    ./sway.nix
   ];

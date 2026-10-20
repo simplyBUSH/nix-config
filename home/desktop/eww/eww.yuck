@@ -1,86 +1,13 @@
-(defwindow bar
-  :monitor 0
-  :geometry (geometry
-    :x "0%"
-    :y "0px"
-    :width "100%"
-    :height "30px"
-    :anchor "top center")
-  :stacking "fg"
-  :exclusive true
+(defvar volume 0)
+(defvar brightness 50)
+(defvar desktop 1)
 
-  (centerbox :class "bar"
-    :orientation "horizontal"
-    :hexpand true
-    :halign "fill"
-    (systray :class "tray"
-             :spacing 6
-             :halign "start"
-             :icon-size 16
-             :prepend-new true)
-    (clock)
-    (control)))
-
-(defwindow pwr-menu
-  :monitor 0
-  :geometry (geometry
-    :x "0px"
-    :y "0px"
-    :width "110px"
-    :height "160px"
-    :anchor "top right")
-  :stacking "overlay"
-  :exclusive false
-  :focusable "ondemand"
-
-  (box :class "power-popup"
-       :orientation "vertical"
-       :spacing 8
-
-    (button :class "power-option"
-            :onclick "systemctl suspend"
-      "Sleep")
-
-    (button :class "power-option"
-            :onclick "systemctl poweroff"
-      "Shutdown")
-
-    (button :class "power-option"
-            :onclick "systemctl reboot"
-      "Reboot")
-  )
-)
-
-(defwindow calendar
-  :monitor 0
-  :geometry (geometry
-    :x "0px"
-    :y "0px"
-    :width "220px"
-    :height "160px"
-    :anchor "top center")
-  :stacking "overlay"
-  :exclusive false
-  :focusable "ondemand"
-(cal)
-)
-
-(defwidget cal []
-  (box :class "cal-box" 
-       :orientation "vertical"
-    (calendar :class "cal"
-              :day {formattime(EWW_TIME, "%d")} 
-              :month {formattime(EWW_TIME, "%m")} 
-              :year {formattime(EWW_TIME, "%Y")})))
-
-(defpoll time :interval "1s"
-  `date "+%a %d %b  %H:%M"`)
-
-(defwidget clock []
-  (button :class "pwr"
-          :onclick "eww open --toggle calendar" time)
-  )
-
+(defvar power-icon '{
+  "lock": "󰦝",
+  "sleep": "󰤄",
+  "shutdown": "⏻",
+  "reboot": ""
+}')
 
 (defvar bat_icons '{
   "bat0": "",
@@ -112,19 +39,90 @@
   "high": "󰃠"
   }')
 
-(defvar volume 0)
-(defvar brightness 50)
+(defvar desktop-icons '{
+  "1": "󰎤",
+  "2": "󰎧",
+  "3": "󰎪",
+  "4": "󰎭",
+  "5": "󰎱",
+  "6": "󰎳",
+  "7": "󰎶",
+  "8": "󰎹",
+  "9": "󰎼",
+  "10": "󰽽"
+}')
+
+(defpoll time :interval "1s"
+  `date "+%a %d %b  %H:%M"`)
 
 (defpoll wifi_sig :interval "5s" :initial "-100"
   "iw dev wlp192s0 link | awk '/signal:/ {s=$2} END {print s ? s : -100}'")
 (defpoll bt_status :interval "3s" :initial "blocked"
   "rfkill -rno SOFT,HARD list bluetooth | grep -qw 'blocked' && echo 'blocked' || echo 'unblocked'")
 
+(defwindow bar
+  :monitor 0
+  :geometry (geometry
+    :x "0%"
+    :y "0px"
+    :width "100%"
+    :height "30px"
+    :anchor "top center")
+  :stacking "fg"
+  :exclusive true
+
+  (centerbox :class "bar"
+    :orientation "horizontal"
+    :hexpand true
+    :halign "fill"
+    
+    (box :orientation "horizontal" 
+         :halign "start" 
+         :space-evenly false 
+         :spacing 4
+      (label :class "desktop-icon" :text "${desktop-icons[desktop]}")
+      (systray :class "tray"
+               :spacing 6
+               :icon-size 20
+               :prepend-new true))
+               
+    (clock)
+    (control)))
+
+(defwidget clock []
+  (button :class "pwr"
+          :onclick "eww open --toggle calendar" time)
+  )
+
+  (defwindow calendar
+  :monitor 0
+  :geometry (geometry
+    :x "0px"
+    :y "0px"
+    :width "220px"
+    :height "160px"
+    :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable "ondemand"
+(cal)
+)
+
+(defwidget cal []
+  (box :class "cal-box" 
+       :orientation "vertical"
+    (calendar :class "cal"
+              :day {formattime(EWW_TIME, "%d")} 
+              :month {formattime(EWW_TIME, "%m")} 
+              :year {formattime(EWW_TIME, "%Y")})))
+
+
 (defwidget control []
   (box :class "center"
        :orientation "horizontal"
        :space-evenly false
        :halign "end"
+       :valign "center"
        :spacing 4
     (label :class "volume-icon"
             :text "${volume < 0 ? vol_icons.muted :
@@ -165,3 +163,36 @@
   )
 )
 
+(defwindow pwr-menu
+  :monitor 0
+  :geometry (geometry
+    :x "0px"
+    :y "0px"
+    :width "56px"
+    :height "160px"
+    :anchor "top right")
+  :stacking "overlay"
+  :exclusive false
+  :focusable "ondemand"
+
+  (box :class "power-popup"
+       :orientation "vertical"
+       :spacing 8
+
+    (button :class "power-option"
+            :onclick "eww close pwr-menu && sleep 0.1 && hyprctl dispatch exec hyprlock &"
+      "${power-icon.lock}")
+
+    (button :class "power-option"
+            :onclick "systemctl suspend"
+      "${power-icon.sleep}")
+
+    (button :class "power-option"
+            :onclick "systemctl poweroff"
+      "${power-icon.shutdown}")
+
+    (button :class "power-option"
+            :onclick "systemctl reboot"
+      "${power-icon.reboot}")
+  )
+)

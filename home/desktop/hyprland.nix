@@ -62,6 +62,7 @@
         follow_mouse = 1;
         accel_profile = if osConfig.networking.hostName == "sylveon" then "adaptive" else "flat";
         sensitivity = if osConfig.networking.hostName == "sylveon" then -0.1 else -0.5;
+        touchpad.scroll_factor = 0.5;
         kb_layout = "pl";
         repeat_rate = 50;
 
@@ -70,28 +71,28 @@
 
       # Workspace switching
       bind = [
-        "$mod, 1, workspace, 1"
-        "$mod, 2, workspace, 2"
-        "$mod, 3, workspace, 3"
-        "$mod, 4, workspace, 4"
-        "$mod, 5, workspace, 5"
-        "$mod, 6, workspace, 6"
-        "$mod, 7, workspace, 7"
-        "$mod, 8, workspace, 8"
-        "$mod, 9, workspace, 9"
-        "$mod, 0, workspace, 10"
+        "$mod, 1, exec, sh -c 'hyprctl dispatch workspace 1 && eww update desktop=1'"
+        "$mod, 2, exec, sh -c 'hyprctl dispatch workspace 2 && eww update desktop=2'"
+        "$mod, 3, exec, sh -c 'hyprctl dispatch workspace 3 && eww update desktop=3'"
+        "$mod, 4, exec, sh -c 'hyprctl dispatch workspace 4 && eww update desktop=4'"
+        "$mod, 5, exec, sh -c 'hyprctl dispatch workspace 5 && eww update desktop=5'"
+        "$mod, 6, exec, sh -c 'hyprctl dispatch workspace 6 && eww update desktop=6'"
+        "$mod, 7, exec, sh -c 'hyprctl dispatch workspace 7 && eww update desktop=7'"
+        "$mod, 8, exec, sh -c 'hyprctl dispatch workspace 8 && eww update desktop=8'"
+        "$mod, 9, exec, sh -c 'hyprctl dispatch workspace 9 && eww update desktop=9'"
+        "$mod, 0, exec, sh -c 'hyprctl dispatch workspace 10 && eww update desktop=10'"
 
         # Move window to workspace
-        "$mod ALT, 1, movetoworkspace, 1"
-        "$mod ALT, 2, movetoworkspace, 2"
-        "$mod ALT, 3, movetoworkspace, 3"
-        "$mod ALT, 4, movetoworkspace, 4"
-        "$mod ALT, 5, movetoworkspace, 5"
-        "$mod ALT, 6, movetoworkspace, 6"
-        "$mod ALT, 7, movetoworkspace, 7"
-        "$mod ALT, 8, movetoworkspace, 8"
-        "$mod ALT, 9, movetoworkspace, 9"
-        "$mod ALT, 0, movetoworkspace, 10"
+        "$mod ALT, 1, exec, sh -c 'hyprctl dispatch movetoworkspace 1 && eww update desktop=1'"
+        "$mod ALT, 2, exec, sh -c 'hyprctl dispatch movetoworkspace 2 && eww update desktop=2'"
+        "$mod ALT, 3, exec, sh -c 'hyprctl dispatch movetoworkspace 3 && eww update desktop=3'"
+        "$mod ALT, 4, exec, sh -c 'hyprctl dispatch movetoworkspace 4 && eww update desktop=4'"
+        "$mod ALT, 5, exec, sh -c 'hyprctl dispatch movetoworkspace 5 && eww update desktop=5'"
+        "$mod ALT, 6, exec, sh -c 'hyprctl dispatch movetoworkspace 6 && eww update desktop=6'"
+        "$mod ALT, 7, exec, sh -c 'hyprctl dispatch movetoworkspace 7 && eww update desktop=7'"
+        "$mod ALT, 8, exec, sh -c 'hyprctl dispatch movetoworkspace 8 && eww update desktop=8'"
+        "$mod ALT, 9, exec, sh -c 'hyprctl dispatch movetoworkspace 9 && eww update desktop=9'"
+        "$mod ALT, 0, exec, sh -c 'hyprctl dispatch movetoworkspace 10 && eww update desktop=10'"
 
         # Focus
         "$mod, left, movefocus, l"

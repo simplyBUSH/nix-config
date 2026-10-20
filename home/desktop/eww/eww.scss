@@ -1,45 +1,51 @@
+$bg: #000000;
+$fg: #ffffff;
+$accent: #7B97A3;
+
 * {
   all: unset;
 }
 
-.bar {
-  background-color: #000000;
-  color: #ffffff;
+.bar,
+.pwr-menu,
+.cal,
+.tray {
+  background-color: $bg;
+  color: $fg;
 }
 
-.pwr-menu {
-  background-color: #000000;
-  color: #ffffff;
+.desktop-icon,
+.tray {
+  margin-left: 4px;
 }
 
-.cal {
-  background-color: #000000;
-  color: #ffffff;
+.desktop-icon {
+  font-size: 24px;
 }
 
 .clock {
-  color: #ffffff;
+  color: $fg;
   font-size: 16px;
   font-weight: bold;
 }
 
-.volume-icon {
+.volume-icon,
+.brightness-icon,
+.wifi-icon,
+.bluetooth-icon,
+.battery-arrow,
+.pwr {
   font-size: 18px;
-  margin-right: 6px;
 }
 
-.brightness-icon {
-  font-size: 18px;
-  margin-right: 6px;
-}
-
-.wifi-icon {
-  font-size: 18px;
+.volume-icon,
+.brightness-icon,
+.wifi-icon,
+.pwr {
   margin-right: 6px;
 }
 
 .bluetooth-icon {
-  font-size: 18px;
   margin-right: 2px;
 }
 
@@ -48,16 +54,21 @@
   margin-right: 8px;
 }
 
-.battery-arrow {
-  font-size: 18px; 
+.volume-text,
+.brightness-text,
+.battery-text {
+  font-size: 17px;
 }
 
 .battery-text {
-  font-size: 17px;
   margin-right: 2px;
 }
 
-.pwr {
-  font-size: 18px;
-  margin-right: 4px;
+.power-option {
+  font-size: 32px;
+  transition: color 150ms ease-in-out;
+
+  &:hover {
+    color: $accent;
+  }
 }

@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  accent = "#F5AAB9";
+  accent = "#7B97A3";
 in
 {
   imports = [
@@ -11,8 +11,9 @@ in
   home-manager.extraSpecialArgs = { inherit accent; };
 
   environment.systemPackages = with pkgs; [
-    efibootmgr
     brightnessctl
+    efibootmgr
+    nh
   ];
 
   nix.settings.experimental-features = [
@@ -42,6 +43,13 @@ in
     nerd-fonts.jetbrains-mono
   ];
 
+ security = {
+   pam.howdy.enable = true;
+   pam.services.hyprlock = {};
+   pam.services.greetd.howdy.enable = false;
+   pam.services.login.howdy.enable = false;
+ };
+
   programs = {
     dconf.enable = true;
     hyprland ={
@@ -58,6 +66,12 @@ in
     blueman.enable = true;
     openssh.enable = true;
     tailscale.enable = true;
+    
+    howdy = {
+      enable = true;
+      control = "sufficient";
+      settings.video.dark_threshold = 85;
+    };
 
     pipewire = {
       enable = true;
