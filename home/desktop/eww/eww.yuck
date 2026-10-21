@@ -40,24 +40,23 @@
   }')
 
 (defvar desktop-icons '{
-  "1": "󰎤",
-  "2": "󰎧",
-  "3": "󰎪",
-  "4": "󰎭",
-  "5": "󰎱",
-  "6": "󰎳",
-  "7": "󰎶",
-  "8": "󰎹",
-  "9": "󰎼",
-  "10": "󰽽"
+  "1": "󰬺",
+  "2": "󰬻",
+  "3": "󰬼",
+  "4": "󰬽",
+  "5": "󰬾",
+  "6": "󰬿",
+  "7": "󰭀",
+  "8": "󰭁",
+  "9": "󰭂",
+  "10": "󰿩"
 }')
 
 (defpoll time :interval "1s"
   `date "+%a %d %b  %H:%M"`)
-
-(defpoll wifi_sig :interval "5s" :initial "-100"
+(defpoll wifi_sig :interval "1s" :initial "-100"
   "iw dev wlp192s0 link | awk '/signal:/ {s=$2} END {print s ? s : -100}'")
-(defpoll bt_status :interval "3s" :initial "blocked"
+(defpoll bt_status :interval "1s" :initial "blocked"
   "rfkill -rno SOFT,HARD list bluetooth | grep -qw 'blocked' && echo 'blocked' || echo 'unblocked'")
 
 (defwindow bar
@@ -188,7 +187,7 @@
       "${power-icon.sleep}")
 
     (button :class "power-option"
-            :onclick "systemctl poweroff"
+            :onclick "systemctl hibernate"
       "${power-icon.shutdown}")
 
     (button :class "power-option"
@@ -196,3 +195,18 @@
       "${power-icon.reboot}")
   )
 )
+
+
+(defwidget activate-linux []
+  (box
+    :orientation "v"
+    :halign "start"
+    :valign "start"
+    (label :xalign 0 :markup "<span font_size=\"large\">Activate Linux</span>")
+    (label :xalign 0 :text "Go to Settings to activate Linux")))
+
+(defwindow activate-linux
+  :monitor 0
+  :stacking "fg"
+  :geometry (geometry :x "16px" :y "48px" :width "250px" :anchor "bottom right")
+  (activate-linux))

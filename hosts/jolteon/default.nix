@@ -47,7 +47,7 @@ in
 
   users.users.bush = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "input" "uinput" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "input" "uinput" "render"];
     home = "/home/bush";
     shell = pkgs.zsh;
   };
@@ -139,7 +139,7 @@ in
   boot = {
     kernelPackages = pkgs.linuxPackages_cachyos-lto-znver4;
     kernelParams = [ "usbcore.autosuspend=-1" ];
-    initrd.kernelModules = [ "usbhid" "hid_generic" ];
+    initrd.kernelModules = [ "usbhid" "hid_generic" "amdgpu" ];
 
     loader = {
       efi.canTouchEfiVariables = false;

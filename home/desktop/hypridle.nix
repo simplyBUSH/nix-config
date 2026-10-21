@@ -11,17 +11,17 @@
       };
       listener = [
         {
-          timeout = 120; # 2 minutes
+          timeout = 500;
           on-timeout = "loginctl lock-session";
         }
         {
-          timeout = 300; # 5 minutes
+          timeout = 530;
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on";
         }
         {
-          timeout = 306; # 5.1 minutes
-          on-timeout = "systemctl suspend";
+          timeout = 540;
+          on-timeout = "systemctl suspend-then-hibernate";
         }
       ];
     };

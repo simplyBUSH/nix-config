@@ -28,7 +28,7 @@
       ll = "eza -lha --git"; 
       ns = "nix shell";
       q = "exit";
-      sdr = "sudo nixos-rebuild switch --flake ~/nix-config#$(hostname)";      
+      sdr = "nh os switch .";      
       size = "du -sh .";
       ts = "tailscale";
       vi = "nvim";

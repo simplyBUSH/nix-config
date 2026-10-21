@@ -109,7 +109,6 @@
         "$mod, F, fullscreen,"
 
         # Apps
-        "$mod, E, exec, nautilus"
         "$mod, Return, exec, $term"
         "$mod, M, exec, element-desktop"
         "$mod, R, exec, hyprctl reload"
@@ -123,6 +122,10 @@
 
         # Close window
         "$mod, Q, killactive,"
+
+        "$mod, L, exec, pkill hyprland"
+        
+        "$mod SHIFT, F23, exec, eww open --toggle activate-linux"
 
         ", XF86Cut, exec, ${pkgs.grimblast}/bin/grimblast copy area"
         "$mod SHIFT, S, exec, ${pkgs.grimblast}/bin/grimblast copy area"

@@ -22,6 +22,9 @@
       set -as terminal-features ",xterm-256color:RGB"
       set -g renumber-windows on
       
+      #underline fix
+      set -g window-status-current-style 'none'
+      
       # create new.. everything in current pwd
       bind c new-window -c "#{pane_current_path}"
       bind '"' split-window -c "#{pane_current_path}"

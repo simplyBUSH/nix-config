@@ -6,7 +6,4 @@
 #    ./iamb.nix
     ./vesktop.nix
   ];
-  home.packages = [
-#    inputs.sable-next.packages.${pkgs.system}.sable
-  ];
 }

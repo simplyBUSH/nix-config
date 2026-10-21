@@ -6,20 +6,26 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    ./sleepfuckery.nix
   ];
+
   home-manager.extraSpecialArgs = { inherit accent; };
+
+  systemd.sleep.settings.Sleep = {
+    HibernateDelaySec = "1h";
+  };
 
   environment.systemPackages = with pkgs; [
     brightnessctl
     efibootmgr
     nh
+    pciutils
   ];
 
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
+
 
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "26.05";
@@ -31,7 +37,7 @@ in
 
   users.users.bush = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "input" "uinput" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "input" "uinput" "render" ];
     home = "/home/bush";
     shell = pkgs.zsh;
   };
@@ -43,12 +49,12 @@ in
     nerd-fonts.jetbrains-mono
   ];
 
- security = {
-   pam.howdy.enable = true;
-   pam.services.hyprlock = {};
-   pam.services.greetd.howdy.enable = false;
-   pam.services.login.howdy.enable = false;
- };
+  security = {
+    pam.howdy.enable = true;
+    pam.services.hyprlock = {};
+    pam.services.greetd.howdy.enable = false;
+    pam.services.login.howdy.enable = false;
+  };
 
   programs = {
     dconf.enable = true;
@@ -59,14 +65,14 @@ in
     steam.enable = true;
     xwayland.enable = true;
     zsh.enable = true;
-    kdeconnect.enable = true;
   };
 
   services = {
     blueman.enable = true;
     openssh.enable = true;
     tailscale.enable = true;
-    
+    tlp.enable = true;
+
     howdy = {
       enable = true;
       control = "sufficient";
@@ -104,15 +110,11 @@ in
       };
     };
 
-    avahi = {
-      enable = true;
-      publish.enable = true;
-      publish.userServices = true;
-    };
-
-    tlp = {
-      enable = true;
-    };
+    logind.settings.Login = {
+      HandleLidSwitch = "suspend-then-hibernate";
+      HandleLidSwitchExternalPower = "suspend-then-hibernate";
+      HandlePowerKey = "suspend-then-hibernate";
+  };
 
     udev.packages = with pkgs; [
       brightnessctl
@@ -120,12 +122,20 @@ in
   };
 
   hardware = {
+    enableRedistributableFirmware = true;
+    cpu.amd.updateMicrocode = true;
+
+    amd-npu = {
+      enable = true;
+      enableNPU = true;
+      enableLemonade = true;
+      gpuTarget = "gfx1152";
+      lemonade.user = "bush";
+    };
+
     graphics = {
       enable = true;
       enable32Bit = true;
-      extraPackages = with pkgs; [
-      mesa.opencl
-      ];
     };
 
     bluetooth = {
@@ -146,9 +156,12 @@ in
 
   boot = {
     initrd.kernelModules = [ "usbhid" "hid_generic" "cpuid" ];
-    kernel.sysctl = {
-        "vm.swappiness" = 180;
-      };
+    kernel.sysctl = { "vm.swappiness" = 180; };
+    kernelPackages = pkgs.linuxPackages_zen;
+    kernelParams = [ "iommu=pt" "amd_iommu=on" ];
+
+    resumeDevice = "/dev/disk/by-uuid/d8bcb427-2025-4edd-9724-b1dc84413626";
+
 
     loader = {
       efi.canTouchEfiVariables = true;
