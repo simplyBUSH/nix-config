@@ -18,12 +18,12 @@
       theme = "default";
 
       image_preview.protocol = {
-        type = "halfblocks";
+        type = "kitty";
       };
 
       notifications = {
         enabled = true;
-        via = "desktop";
+        via = "bell";
       };
     };
   };

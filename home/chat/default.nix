@@ -3,7 +3,7 @@
   imports = [
 #    ./discordo.nix
     ./element.nix
-#    ./iamb.nix
+    ./iamb.nix
     ./vesktop.nix
   ];
 }

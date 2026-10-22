@@ -7,7 +7,7 @@
 
     settings = {
       "$mod" = "SUPER";
-      "$term" = "alacritty";
+      "$term" = "foot";
       monitor = ", preferred, auto, 1";
       exec-once = [ 
           "swaybg -i ${../../resources/pictures/wallpaper.png} -m fill"
