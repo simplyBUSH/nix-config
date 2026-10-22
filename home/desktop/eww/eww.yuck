@@ -60,8 +60,17 @@
 (defpoll wifi_sig :interval "1s" :initial "-100"
   "iw dev wlp192s0 link | awk '/signal:/ {s=$2} END {print s ? s : -100}'")
 
+(defpoll wifi_stat :interval "1s" :initial "Unknown"
+  `nmcli -t -f TYPE,STATE,CONNECTION dev | awk -F: '$1=="wifi" {print ($2=="connected" ? $3 : "no")'}`)
+
 (defpoll bt_status :interval "1s" :initial "blocked"
   "rfkill -rno SOFT,HARD list bluetooth | grep -qw 'blocked' && echo 'blocked' || echo 'unblocked'")
+
+(defpoll free_ram :interval "1s"
+  `free -h | awk '/^Mem:/ {print $4}'`)
+
+(defpoll used_ram :interval "1s"
+  `free -h | awk '/^Mem:/ {print $3}'`)
 
 (defwindow bar
   :monitor 0
@@ -263,12 +272,28 @@
        :orientation "vertical"
     (box :class "connections"
          :orientation "vertical"
-      (label :text "Wifi name")
+         (box :class "wifi-box"
+              :orientation "h"
+              :space-evenly "false"
+              (label :halign "start"
+                     :hexpand "true"
+                     :text `${wifi_stat}`)
+              (label :halign "end"
+                     :text `${round(EWW_NET.wlp192s0.NET_DOWN/1024, 1)}KB/s`)
+              )
       (label :text "bluetooth device name"))
     (box :class "stats"
          :orientation "vertical"
       (label :text "CPU util, CPU temp")
-      (label :text "GPU util, GPU temp"))))
+      (box :class "ram-display"
+           :orientation "h"
+           :space-evenly "false"
+           (label :class "ram-icon"
+                  :halign "start"
+                  :hexpand "true"
+                  :text "")
+           (label :halign "end"
+                  :text "Free: ${free_ram}, Used ${used_ram}")))))
 
 
 
@@ -323,12 +348,12 @@
 
 
 
-  (defwindow closer
-    :monitor 0
-    :geometry (geometry :width "100%" :height "100%")
-    :stacking "fg"
-    :focusable false
-    (eventbox :onclick "eww close calendar control-menu pwr-menu closer && eww update ws_open=false"))
+(defwindow closer
+  :monitor 0
+  :geometry (geometry :width "100%" :height "100%")
+  :stacking "fg"
+  :focusable false
+  (eventbox :onclick "eww close calendar control-menu pwr-menu closer && eww update ws_open=false"))
 
 
 
