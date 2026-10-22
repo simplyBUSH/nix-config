@@ -79,7 +79,6 @@
     :hexpand true
     :halign "fill"
 
-    ;; Left: Expanding Desktop Circle/Pill + Systray on black bg
     (box :class "left-modules"
          :orientation "horizontal"
          :halign "start"
