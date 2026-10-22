@@ -12,7 +12,7 @@
       exec-once = [ 
           "swaybg -i ${../../resources/pictures/wallpaper.png} -m fill"
           "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%"
-          "eww open bar"
+          "eww open-many bar corner-tl corner-tr corner-bl corner-br"
         ];
       cursor = {
         no_hardware_cursors = true;
@@ -40,7 +40,7 @@
           passes = 2;
         };
         shadow = {
-          enabled = true;
+          enabled = false;
           range = 8;
           render_power = 2;
         };

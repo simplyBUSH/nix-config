@@ -190,3 +190,29 @@ $gap: 8px;
     background: none;
   }
 }
+
+
+
+
+
+.corner-tl, .corner-tr, .corner-bl, .corner-br {
+  background-color: transparent;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.corner-tl {
+  background-image: radial-gradient(circle at 100% 100%, transparent 20px, $bg 20px);
+}
+
+.corner-tr {
+  background-image: radial-gradient(circle at 0% 100%, transparent 20px, $bg 20px);
+}
+
+.corner-bl {
+  background-image: radial-gradient(circle at 100% 0%, transparent 20px, $bg 20px);
+}
+
+.corner-br {
+  background-image: radial-gradient(circle at 0% 0%, transparent 20px, $bg 20px);
+}

@@ -110,7 +110,7 @@
              :valign "center"
              :xalign 0.5
              :yalign 0.5
-             :text "${desktop-icons[desktop]}"))
+             :text "${ws_open ? '󱄅' : desktop-icons[desktop]}"))
     (revealer :transition "slideright"
               :reveal ws_open
               :duration "250ms"
@@ -188,9 +188,9 @@
              :spacing 10
           (label :class "volume-icon"
                  :text "${volume <= 0 ? vol_icons.muted :
-                          volume < 35 ? vol_icons.low :
-                          volume < 70 ? vol_icons.med :
-                                        vol_icons.high}")
+                            volume < 35 ? vol_icons.low :
+                              volume < 70 ? vol_icons.med :
+                                              vol_icons.high}")
           (label :class "volume-text"
                  :text "${volume < 0 ? 'Muted' : volume + '%'}"))
 
@@ -202,7 +202,7 @@
           (label :class "brightness-icon"
                  :text "${brightness < 35 ? bri_icons.low :
                             brightness < 70 ? bri_icons.med :
-                                              bri_icons.high}")
+                                                bri_icons.high}")
           (label :class "brightness-text"
                  :text "${brightness}%"))
 
@@ -259,7 +259,16 @@
   :stacking "overlay"
   :exclusive false
   :focusable "ondemand"
-  (box :class "control-popup"))
+  (box :class "control-popup"
+       :orientation "vertical"
+    (box :class "connections"
+         :orientation "vertical"
+      (label :text "Wifi name")
+      (label :text "bluetooth device name"))
+    (box :class "stats"
+         :orientation "vertical"
+      (label :text "CPU util, CPU temp")
+      (label :text "GPU util, GPU temp"))))
 
 
 
@@ -320,3 +329,39 @@
     :stacking "fg"
     :focusable false
     (eventbox :onclick "eww close calendar control-menu pwr-menu closer && eww update ws_open=false"))
+
+
+
+
+
+(defwindow corner-tl
+  :monitor 0
+  :geometry (geometry :x "0px" :y "0px" :width "20px" :height "20px" :anchor "top left")
+  :stacking "fg"
+  :exclusive false
+  :focusable false
+  (box :class "corner-tl"))
+
+(defwindow corner-tr
+  :monitor 0
+  :geometry (geometry :x "0px" :y "0px" :width "20px" :height "20px" :anchor "top right")
+  :stacking "fg"
+  :exclusive false
+  :focusable false
+  (box :class "corner-tr"))
+
+(defwindow corner-bl
+  :monitor 0
+  :geometry (geometry :x "0px" :y "0px" :width "20px" :height "20px" :anchor "bottom left")
+  :stacking "fg"
+  :exclusive false
+  :focusable false
+  (box :class "corner-bl"))
+
+(defwindow corner-br
+  :monitor 0
+  :geometry (geometry :x "0px" :y "0px" :width "20px" :height "20px" :anchor "bottom right")
+  :stacking "fg"
+  :exclusive false
+  :focusable false
+  (box :class "corner-br"))
