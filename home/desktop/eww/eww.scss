@@ -1,32 +1,133 @@
 $bg: #000000;
 $fg: #ffffff;
+$pill-bg: #1e1e1e;
 $accent: #7B97A3;
+$gap: 8px;
 
 * {
   all: unset;
 }
 
-.bar,
-.pwr-menu,
-.cal,
-.tray {
+.bar {
   background-color: $bg;
   color: $fg;
 }
 
-.desktop-icon,
 .tray {
-  margin-left: 4px;
+  background-color: $bg;
+}
+
+.left-modules {
+  margin-left: $gap;
+}
+
+.right-modules {
+  margin-right: $gap;
+}
+
+.pill {
+  background-color: $pill-bg;
+  color: $fg;
+  border-radius: 999px;
+  min-height: 30px;
+}
+
+.circle-btn {
+  background-color: $pill-bg;
+  color: $fg;
+  border-radius: 999px;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0px;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+
+  &:hover {
+    background-color: $accent;
+    color: $bg;
+  }
+}
+
+.desktop-pill {
+  &.open {
+    padding-right: 4px;
+  }
 }
 
 .desktop-icon {
-  font-size: 26px;
+  font-size: 20px;
 }
 
-.clock {
-  color: $fg;
-  font-size: 16px;
+.ws-list {
+  margin-left: 4px;
+}
+
+.ws-num {
+  font-size: 13px;
   font-weight: bold;
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0px;
+  border-radius: 999px;
+  color: $fg;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+
+  &:hover {
+    background-color: $accent;
+    color: $bg;
+  }
+
+  &.active {
+    background-color: $accent;
+    color: $bg;
+  }
+}
+
+.clock-pill {
+  padding: 0px 18px;
+  font-size: 15px;
+  font-weight: bold;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+
+  &:hover {
+    background-color: $accent;
+    color: $bg;
+  }
+}
+
+.control-pill {
+  padding: 0px 12px;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+
+  &:hover {
+    background-color: $accent;
+    color: $bg;
+  }
+}
+
+.anim-box {
+  transition: min-width 200ms ease-in-out;
+
+  &.len-1 {
+    min-width: 42px;
+  }
+  &.len-2 {
+    min-width: 50px;
+  }
+  &.len-3 {
+    min-width: 58px;
+  }
+  &.len-muted {
+    min-width: 68px;
+  }
+  &.len-bat-1 {
+    min-width: 58px;
+  }
+  &.len-bat-2 {
+    min-width: 66px;
+  }
+  &.len-bat-3 {
+    min-width: 74px;
+  }
 }
 
 .volume-icon,
@@ -35,41 +136,50 @@ $accent: #7B97A3;
 .bluetooth-icon,
 .battery-arrow,
 .pwr {
-  font-size: 18px;
-}
-
-.volume-icon,
-.brightness-icon,
-.wifi-icon,
-.pwr {
-  margin-right: 6px;
-}
-
-.bluetooth-icon {
-  margin-right: 2px;
+  font-size: 17px;
 }
 
 .battery-icon {
-  font-size: 22px;
-  margin-right: 8px;
+  font-size: 19px;
+  margin-left: 4px;
+  margin-right: 10px;
+}
+
+.battery-arrow {
+  margin-right: 3px;
 }
 
 .volume-text,
 .brightness-text,
 .battery-text {
-  font-size: 17px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.battery-text {
-  margin-right: 2px;
+.pwr-icon {
+  padding: 0px;
+  margin: 0px;
+  padding-right: 4px;
+}
+
+.cal-box,
+.cal,
+.power-popup,
+.control-popup {
+  background-color: $pill-bg;
+  color: $fg;
+  border-radius: 12px;
+  padding: 8px;
 }
 
 .power-option {
-  font-size: 32px;
-  transition: color 150ms ease-in-out;
+  font-size: 28px;
+  border-radius: 8px;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
 
   &:hover {
-    color: $accent;
+    background-color: $accent;
+    color: $bg;
   }
 }
 

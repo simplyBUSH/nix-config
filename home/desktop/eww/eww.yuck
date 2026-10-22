@@ -1,6 +1,8 @@
 (defvar volume 0)
 (defvar brightness 50)
 (defvar desktop 1)
+(defvar ws_open false)
+(defvar workspaces "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
 
 (defvar power-icon '{
   "lock": "󰦝",
@@ -24,20 +26,20 @@
   "sig2": "󰤢", 
   "sig3": "󰤥", 
   "sig4": "󰤨"
-  }')
+}')
 
 (defvar vol_icons '{
   "muted": "󰝟", 
   "low": "󰕿", 
   "med": "󰖀", 
   "high": "󰕾"
-  }')
+}')
 
 (defvar bri_icons '{
   "low": "󰃞", 
   "med": "󰃟", 
   "high": "󰃠"
-  }')
+}')
 
 (defvar desktop-icons '{
   "1": "󰬺",
@@ -54,8 +56,10 @@
 
 (defpoll time :interval "1s"
   `date "+%a %d %b  %H:%M"`)
+
 (defpoll wifi_sig :interval "1s" :initial "-100"
   "iw dev wlp192s0 link | awk '/signal:/ {s=$2} END {print s ? s : -100}'")
+
 (defpoll bt_status :interval "1s" :initial "blocked"
   "rfkill -rno SOFT,HARD list bluetooth | grep -qw 'blocked' && echo 'blocked' || echo 'unblocked'")
 
@@ -65,7 +69,7 @@
     :x "0%"
     :y "0px"
     :width "100%"
-    :height "30px"
+    :height "38px"
     :anchor "top center")
   :stacking "fg"
   :exclusive true
@@ -74,99 +78,199 @@
     :orientation "horizontal"
     :hexpand true
     :halign "fill"
-    
-    (box :orientation "horizontal" 
-         :halign "start" 
-         :space-evenly false 
-         :spacing 4
-      (label :class "desktop-icon" :text "${desktop-icons[desktop]}")
+
+    ;; Left: Expanding Desktop Circle/Pill + Systray on black bg
+    (box :class "left-modules"
+         :orientation "horizontal"
+         :halign "start"
+         :valign "center"
+         :space-evenly false
+         :spacing 8
+      (desktop-switcher)
       (systray :class "tray"
-               :spacing 6
-               :icon-size 20
+               :spacing 8
+               :icon-size 18
                :prepend-new true))
-               
-    (clock)
-    (control)))
+      (clock)
+      (right-modules)))
+
+
+
+
+
+(defwidget desktop-switcher []
+  (box :class "pill desktop-pill ${ws_open ? 'open' : ''}"
+       :orientation "horizontal"
+       :space-evenly false
+       :valign "center"
+    (button :class "circle-btn desktop-icon"
+            :halign "center"
+            :valign "center"
+            :onclick "eww open --toggle closer && eww update ws_open=${!ws_open}"
+      (label :halign "center"
+             :valign "center"
+             :xalign 0.5
+             :yalign 0.5
+             :text "${desktop-icons[desktop]}"))
+    (revealer :transition "slideright"
+              :reveal ws_open
+              :duration "250ms"
+      (box :class "ws-list"
+           :orientation "horizontal"
+           :space-evenly false
+           :valign "center"
+           :spacing 4
+        (for ws in workspaces
+          (button :class "ws-num ${desktop == ws ? 'active' : ''}"
+                  :halign "center"
+                  :valign "center"
+                  :onclick "hyprctl dispatch workspace ${ws} && eww update desktop=${ws} ws_open=false"
+            (label :halign "center"
+                   :valign "center"
+                   :xalign 0.5
+                   :yalign 0.5
+                   :text "${ws}")))))))
+
+
+
+
 
 (defwidget clock []
-  (button :class "pwr"
-          :onclick "eww open --toggle calendar" time)
-  )
+  (button :class "pill clock-pill"
+          :valign "center"
+          :onclick "eww open --toggle closer && eww open --toggle calendar"
+    time))
 
-  (defwindow calendar
+(defwindow calendar
   :monitor 0
   :geometry (geometry
     :x "0px"
-    :y "0px"
+    :y "6px"
     :width "220px"
     :height "160px"
     :anchor "top center")
   :stacking "overlay"
   :exclusive false
   :focusable "ondemand"
-(cal)
-)
+  (cal))
 
 (defwidget cal []
-  (box :class "cal-box" 
+  (box :class "cal-box"
        :orientation "vertical"
     (calendar :class "cal"
-              :day {formattime(EWW_TIME, "%d")} 
-              :month {formattime(EWW_TIME, "%m")} 
+              :day {formattime(EWW_TIME, "%d")}
+              :month {formattime(EWW_TIME, "%m")}
               :year {formattime(EWW_TIME, "%Y")})))
 
 
-(defwidget control []
-  (box :class "center"
+
+
+
+(defwidget right-modules []
+  (box :class "right-modules"
        :orientation "horizontal"
        :space-evenly false
        :halign "end"
        :valign "center"
-       :spacing 4
-    (label :class "volume-icon"
-            :text "${volume < 0 ? vol_icons.muted :
-                       volume == 0 ? vol_icons.muted :
-                         volume < 35 ? vol_icons.low :
-                           volume < 70 ? vol_icons.med :
-                                           vol_icons.high}")
-    (label :class "volume-text"
-            :text "${volume < 0 ? 'Muted' : volume + '%'}")
-    (label :class "brightness-icon"
-            :text "${brightness < 35 ? bri_icons.low :
-                       brightness < 70 ? bri_icons.med :
-                                           bri_icons.high}")
-    (label :class "brightness-text"
-           :text "${brightness}%")
-    (label :class "wifi-icon"
-           :text "${wifi_sig <= -100 ? wifi_icons.off :
-                      wifi_sig < -80 ? wifi_icons.sig0 :
-                       wifi_sig < -70 ? wifi_icons.sig1 :
-                         wifi_sig < -60 ? wifi_icons.sig2 :
-                           wifi_sig < -50 ? wifi_icons.sig3 :
-                                              wifi_icons.sig4}")
-    (label :class "bluetooth-icon"
-           :text "${bt_status == 'unblocked' ? '󰂯' : '󰂲'}")
-    (label :class "battery-icon"
-           :text "${EWW_BATTERY.BAT1.capacity < 20 ? bat_icons.bat0 :
-                      EWW_BATTERY.BAT1.capacity < 40 ? bat_icons.bat1 :
-                        EWW_BATTERY.BAT1.capacity < 60 ? bat_icons.bat2 :
+       :spacing 8
+
+    (button :class "pill control-pill"
+            :valign "center"
+            :onclick "eww open --toggle closer && eww open --toggle control-menu"
+      (box :orientation "horizontal"
+           :space-evenly false
+           :valign "center"
+           :spacing 12
+
+        (box :class "anim-box ${volume < 0 ? 'len-muted' : volume < 10 ? 'len-1' : volume < 100 ? 'len-2' : 'len-3'}"
+             :orientation "horizontal"
+             :space-evenly false
+             :valign "center"
+             :spacing 10
+          (label :class "volume-icon"
+                 :text "${volume <= 0 ? vol_icons.muted :
+                          volume < 35 ? vol_icons.low :
+                          volume < 70 ? vol_icons.med :
+                                        vol_icons.high}")
+          (label :class "volume-text"
+                 :text "${volume < 0 ? 'Muted' : volume + '%'}"))
+
+        (box :class "anim-box ${brightness < 10 ? 'len-1' : brightness < 100 ? 'len-2' : 'len-3'}"
+             :orientation "horizontal"
+             :space-evenly false
+             :valign "center"
+             :spacing 7
+          (label :class "brightness-icon"
+                 :text "${brightness < 35 ? bri_icons.low :
+                            brightness < 70 ? bri_icons.med :
+                                              bri_icons.high}")
+          (label :class "brightness-text"
+                 :text "${brightness}%"))
+
+        (label :class "wifi-icon"
+               :text "${wifi_sig <= -100 ? wifi_icons.off :
+                            wifi_sig < -80 ? wifi_icons.sig0 :
+                              wifi_sig < -70 ? wifi_icons.sig1 :
+                                wifi_sig < -60 ? wifi_icons.sig2 :
+                                  wifi_sig < -50 ? wifi_icons.sig3 :
+                                                     wifi_icons.sig4}")
+
+        (label :class "bluetooth-icon"
+               :text "${bt_status == 'unblocked' ? '󰂯' : '󰂲'}")
+
+        (box :class "anim-box ${EWW_BATTERY.BAT1.capacity < 10 ? 'len-bat-1' : EWW_BATTERY.BAT1.capacity < 100 ? 'len-bat-2' : 'len-bat-3'}"
+             :orientation "horizontal"
+             :space-evenly false
+             :valign "center"
+          (label :class "battery-icon"
+                 :text "${EWW_BATTERY.BAT1.capacity < 20 ? bat_icons.bat0 :
+                          EWW_BATTERY.BAT1.capacity < 40 ? bat_icons.bat1 :
+                          EWW_BATTERY.BAT1.capacity < 60 ? bat_icons.bat2 :
                           EWW_BATTERY.BAT1.capacity < 80 ? bat_icons.bat3 :
-                                                             bat_icons.bat4}")
-    (label :class "battery-arrow"
-           :text "${EWW_BATTERY.BAT1.status == 'Charging' ? '' : 
-             EWW_BATTERY.BAT1.status == 'Discharging' ? '': '-'}")
-    (label :class "battery-text"
-           :text "${EWW_BATTERY.BAT1.capacity}%")
-    (button :class "pwr"
-            :onclick "eww open --toggle pwr-menu" "⏻")
-  )
-)
+                                                           bat_icons.bat4}")
+          (label :class "battery-arrow"
+                 :text "${EWW_BATTERY.BAT1.status == 'Charging' ? '' :
+                          EWW_BATTERY.BAT1.status == 'Discharging' ? '' : '-'}")
+          (label :class "battery-text"
+                 :text "${EWW_BATTERY.BAT1.capacity}%"))))
+
+    (button :class "circle-btn pwr"
+            :halign "center"
+            :valign "center"
+            :onclick "eww open --toggle closer && eww open --toggle pwr-menu"
+      (label :class "pwr-icon"
+             :halign "center"
+             :valign "center"
+             :xalign 0.5
+             :yalign 0.5
+             :text "⏻"))))
+
+
+
+
+
+(defwindow control-menu
+  :monitor 0
+  :geometry (geometry
+    :x "46px"
+    :y "6px"
+    :width "240px"
+    :height "140px"
+    :anchor "top right")
+  :stacking "overlay"
+  :exclusive false
+  :focusable "ondemand"
+  (box :class "control-popup"))
+
+
+
+
 
 (defwindow pwr-menu
   :monitor 0
   :geometry (geometry
-    :x "0px"
-    :y "0px"
+    :x "8px"
+    :y "6px"
     :width "56px"
     :height "160px"
     :anchor "top right")
@@ -177,31 +281,27 @@
   (box :class "power-popup"
        :orientation "vertical"
        :spacing 8
-
     (button :class "power-option"
-            :onclick "eww close pwr-menu && sleep 0.1 && hyprctl dispatch exec hyprlock &"
+            :onclick "eww close pwr-menu closer && sleep 0.1 && hyprctl dispatch exec hyprlock &"
       "${power-icon.lock}")
-
     (button :class "power-option"
             :onclick "systemctl suspend"
       "${power-icon.sleep}")
-
     (button :class "power-option"
             :onclick "systemctl hibernate"
       "${power-icon.shutdown}")
-
     (button :class "power-option"
             :onclick "systemctl reboot"
-      "${power-icon.reboot}")
-  )
-)
+      "${power-icon.reboot}")))
+
+
+
 
 
 (defwidget activate-linux []
-  (box
-    :orientation "v"
-    :halign "start"
-    :valign "start"
+  (box :orientation "v"
+       :halign "start"
+       :valign "start"
     (label :xalign 0 :markup "<span font_size=\"large\">Activate Linux</span>")
     (label :xalign 0 :text "Go to Settings to activate Linux")))
 
@@ -210,3 +310,14 @@
   :stacking "fg"
   :geometry (geometry :x "16px" :y "48px" :width "250px" :anchor "bottom right")
   (activate-linux))
+
+
+
+
+
+  (defwindow closer
+    :monitor 0
+    :geometry (geometry :width "100%" :height "100%")
+    :stacking "fg"
+    :focusable false
+    (eventbox :onclick "eww close calendar control-menu pwr-menu closer && eww update ws_open=false"))
