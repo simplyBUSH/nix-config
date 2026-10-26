@@ -20,8 +20,6 @@ in
     efibootmgr
     nh
     pciutils
-    qemu
-    ollama-rocm
   ];
 
   nix.settings.experimental-features = [
@@ -33,10 +31,10 @@ in
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "26.05";
   networking = {
-  hostName = "sylveon";
-  networkmanager = { enable = true; };
-  firewall.trustedInterfaces = [ "tailscale0" ];
-  firewall.allowedTCPPorts = [ 54321 ];
+    hostName = "sylveon";
+    networkmanager = { enable = true; };
+    firewall.trustedInterfaces = [ "tailscale0" ];
+    firewall.allowedTCPPorts = [ 54321 ];
 };
 
   users.users.bush = {

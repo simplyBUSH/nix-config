@@ -7,25 +7,34 @@
     ../desktop
     ../shell
     ../gaming
-    ../rquickshare.nix
+#    ../rquickshare.nix
   ];
 
-  home.username = "bush";
-  home.homeDirectory = "/home/bush";
-  home.stateVersion = "26.05";
+  home = {
+    username = "bush";
+    homeDirectory = "/home/bush";
+    stateVersion = "26.05";
 
-  home.packages = with pkgs; [
-    firefox
-    gnome-calculator
-  ];
+    packages = with pkgs; [
+      firefox
+      gnome-calculator
+    ];
 
-  home.pointerCursor = {
-    enable = true;
-    name = "Adwaita";
-    package = pkgs.adwaita-icon-theme;
-    size = 24;
-    gtk.enable = true;
+    pointerCursor = {
+      enable = true;
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
+      size = 24;
+      gtk.enable = true;
+    };
   };
+
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    nix-direnv.enable = true;
+  };
+
 
   gtk = {
     enable = true;

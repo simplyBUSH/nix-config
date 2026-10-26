@@ -1,7 +1,7 @@
 { pkgs, ...}:
 {
   imports = [
-    ./alacritty.nix
+#    ./alacritty.nix
     ./tmux.nix
     ./zsh.nix
     ./foot.nix

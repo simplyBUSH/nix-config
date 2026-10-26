@@ -15,6 +15,7 @@
       set -g status-interval   5
       set -g status-keys       vi
       set -g allow-passthrough on
+      set -as terminal-features ",xterm-256color:RGB,tmux-256color:RGB"
       
       set -g focus-events      off
       setw -g aggressive-resize off
@@ -42,6 +43,9 @@
       %hidden ACCENT="${accent}"
       %hidden GREY="#b6b8bb"
       %hidden DARK="#0c0c0c"
+
+      set -g popup-style "bg=$DARK,fg=$DARK"
+      set -g popup-border-style "fg=$ACCENT,bg=$DARK"
       
       set -g mode-style "fg=$DARK,bg=$GREY"
       set -g message-style "fg=$DARK,bg=$GREY"
@@ -62,8 +66,8 @@
       #popup
       # Outside popup → open it
       bind g if-shell '[ "$(tmux display-message -p "#S")" = "popup" ]' \
-        'detach-client' \
-        'display-popup -E -w 70% -h 60% "tmux new-session -A -s popup"'
+      'detach-client' \
+      'display-popup -E -w 70% -h 60% -b rounded -s "bg=$DARK,fg=$GREY" -S "fg=$ACCENT,bg=$DARK" "tmux new-session -A -s popup"'
       
       # Status Left: Session name in Accent Color
       set -g status-left "#[fg=$DARK,bg=$ACCENT,bold] #S #[fg=$ACCENT,bg=default,nobold,nounderscore,noitalics]"

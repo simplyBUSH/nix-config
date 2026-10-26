@@ -2,7 +2,7 @@
 
 {
   home.packages = with pkgs; [
-    prismlauncher
+#    prismlauncher
     protonplus
     olympus
   #  r2modman

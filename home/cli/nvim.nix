@@ -28,6 +28,7 @@
                 Normal = { bg = "#000000" },
                 NormalNC = { bg = "#000000" },
                 NormalFloat = { bg = "#000000" },
+                FloatBorder = { fg = "#525253", bg = "#000000" },
                 SignColumn = { bg = "#000000" },
                 EndOfBuffer = { bg = "#000000" },
               },
@@ -40,6 +41,130 @@
 
       nvim-web-devicons
       plenary-nvim
+
+  {
+      plugin = nvim-lspconfig;
+      type = "lua";
+      config = ''
+          local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+          -- Configure clangd using the native vim.lsp.config API
+          vim.lsp.config("clangd", {
+            capabilities = capabilities,
+            cmd = {
+              "clangd",
+              "--background-index",
+              "--clang-tidy",
+              "--header-insertion=iwyu",
+            },
+          })
+
+          -- Enable the server (activates automatically when opening C/C++ files)
+          vim.lsp.enable("clangd")
+
+          -- Configure error highlights and the floating error box
+          vim.diagnostic.config({
+            virtual_text = false, -- Disable inline clutter since we use the float box
+            signs = true,         -- Highlight the line / sign column on error
+            underline = true,     -- Underline the offending code
+            update_in_insert = false,
+            severity_sort = true,
+            float = {
+              border = "rounded",
+              source = "always",
+              header = "",
+              prefix = "",
+            },
+          })
+
+          -- Lower updatetime so the error box pops up quickly (300ms) when selecting a line
+          vim.opt.updatetime = 300
+
+          -- Show floating error box automatically when the cursor rests on an error line
+          vim.api.nvim_create_autocmd("CursorHold", {
+            callback = function()
+              vim.diagnostic.open_float(nil, {
+                focusable = false,
+                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+                scope = "line",
+              })
+            end,
+          })
+
+          -- Useful LSP keymaps once clangd attaches
+          vim.api.nvim_create_autocmd("LspAttach", {
+            callback = function(ev)
+              local opts = { buffer = ev.buf, noremap = true, silent = true }
+              vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+              vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+              vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+              vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+              vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+            end,
+          })
+        '';
+      }
+
+      # --- Autocompletion (Variables, Functions, Snippets) ---
+      cmp-nvim-lsp
+      cmp-buffer
+      cmp-path
+      luasnip
+      cmp_luasnip
+      {
+        plugin = nvim-cmp;
+        type = "lua";
+        config = ''
+          local cmp = require("cmp")
+          local luasnip = require("luasnip")
+
+          cmp.setup({
+            snippet = {
+              expand = function(args)
+                luasnip.lsp_expand(args.body)
+              end,
+            },
+            window = {
+              completion = cmp.config.window.bordered(),
+              documentation = cmp.config.window.bordered(),
+            },
+            mapping = cmp.mapping.preset.insert({
+              ["<C-n>"] = cmp.mapping.select_next_item(),
+              ["<C-p>"] = cmp.mapping.select_prev_item(),
+              ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+              ["<C-f>"] = cmp.mapping.scroll_docs(4),
+              ["<C-Space>"] = cmp.mapping.complete(),
+              ["<C-e>"] = cmp.mapping.abort(),
+              ["<CR>"] = cmp.mapping.confirm({ select = true }),
+              ["<Tab>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                  cmp.select_next_item()
+                elseif luasnip.expand_or_jumpable() then
+                  luasnip.expand_or_jump()
+                else
+                  fallback()
+                end
+              end, { "i", "s" }),
+              ["<S-Tab>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                  cmp.select_prev_item()
+                elseif luasnip.jumpable(-1) then
+                  luasnip.jump(-1)
+                else
+                  fallback()
+                end
+              end, { "i", "s" }),
+            }),
+            sources = cmp.config.sources({
+              { name = "nvim_lsp" }, -- C++ variables, functions, types from clangd
+              { name = "luasnip" },
+            }, {
+              { name = "buffer" },
+              { name = "path" },
+            }),
+          })
+        '';
+      }
 
       {
         plugin = oil-nvim;

@@ -18,6 +18,7 @@
     iw
     uv
     wget
+    fend
   ];
 
   imports = [

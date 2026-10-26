@@ -21,7 +21,6 @@
       modules = [
         ./hosts/jolteon
         home-manager.nixosModules.home-manager
-        inputs.bnm.nixosModules.default
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
@@ -40,6 +39,7 @@
         ./hosts/sylveon
         home-manager.nixosModules.home-manager
         nix-amd-ai.nixosModules.default
+        inputs.bnm.nixosModules.default
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
