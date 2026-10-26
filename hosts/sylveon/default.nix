@@ -73,8 +73,10 @@ in
 
   services = {
     blueman.enable = true;
+    bnm.enable = true;
     openssh.enable = true;
     tailscale.enable = true;
+    tailscale.extraSetFlags = [ "--operator=bush" ];
     tlp.enable = true;
 
     avahi = {

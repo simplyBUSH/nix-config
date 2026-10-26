@@ -6,6 +6,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     nix-amd-ai.url = "github:noamsto/nix-amd-ai";
+    bnm.url = "github:dopeCape/better-nm";
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -20,6 +21,7 @@
       modules = [
         ./hosts/jolteon
         home-manager.nixosModules.home-manager
+        inputs.bnm.nixosModules.default
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
