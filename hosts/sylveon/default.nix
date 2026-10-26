@@ -11,14 +11,17 @@ in
   home-manager.extraSpecialArgs = { inherit accent; };
 
   systemd.sleep.settings.Sleep = {
-    HibernateDelaySec = "1h";
+    HibernateDelaySec = "2h";
   };
 
   environment.systemPackages = with pkgs; [
     brightnessctl
+    adwsteamgtk
     efibootmgr
     nh
     pciutils
+    qemu
+    ollama-rocm
   ];
 
   nix.settings.experimental-features = [
@@ -33,6 +36,7 @@ in
   hostName = "sylveon";
   networkmanager = { enable = true; };
   firewall.trustedInterfaces = [ "tailscale0" ];
+  firewall.allowedTCPPorts = [ 54321 ];
 };
 
   users.users.bush = {
@@ -72,6 +76,12 @@ in
     openssh.enable = true;
     tailscale.enable = true;
     tlp.enable = true;
+
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+  };
 
     howdy = {
       enable = true;

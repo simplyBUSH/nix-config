@@ -6,7 +6,8 @@
     ../cli
     ../desktop
     ../shell
-#    ../gaming
+    ../gaming
+    ../rquickshare.nix
   ];
 
   home.username = "bush";

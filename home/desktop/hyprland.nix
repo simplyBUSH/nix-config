@@ -35,9 +35,11 @@
       decoration = {
         rounding = 0;
         blur = {
-          enabled = false;
-          size = 5;
+          enabled = true;
+          size = 3;
           passes = 2;
+          new_optimizations = true;
+          noise = 0.04;
         };
         shadow = {
           enabled = false;
@@ -68,6 +70,12 @@
 
         repeat_delay = 300;
       };
+      
+      layerrule = [
+        "blur on, ignore_alpha 0.1, match:namespace ^(calendar)$"
+        "blur on, ignore_alpha 0.1, match:namespace ^(control-menu)$"
+        "blur on, ignore_alpha 0.1, match:namespace ^(pwr-menu)$"
+      ];
 
       # Workspace switching
       bind = [
@@ -112,7 +120,6 @@
         "$mod, Return, exec, $term"
         "$mod, M, exec, element-desktop"
         "$mod, R, exec, hyprctl reload"
-        "$mod, S, exec, XDG_CURRENT_DESKTOP=GNOME gnome-control-center"
         "$mod, T, exec, $term"
         "$mod, V, exec, vesktop"
         "$mod, W, exec, firefox"
@@ -122,6 +129,7 @@
 
         # Close window
         "$mod, Q, killactive,"
+        "$mod SHIFT, Q, forcekillactive,"
 
         "$mod, L, exec, pkill hyprland"
         

@@ -18,7 +18,7 @@
       theme = "default";
 
       image_preview.protocol = {
-        type = "kitty";
+        type = "sixel";
       };
 
       notifications = {

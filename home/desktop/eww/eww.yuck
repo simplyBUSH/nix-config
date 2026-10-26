@@ -61,7 +61,7 @@
   "iw dev wlp192s0 link | awk '/signal:/ {s=$2} END {print s ? s : -100}'")
 
 (defpoll wifi_stat :interval "1s" :initial "Unknown"
-  `nmcli -t -f TYPE,STATE,CONNECTION dev | awk -F: '$1=="wifi" {print ($2=="connected" ? $3 : "no")'}`)
+  `nmcli -t -f TYPE,STATE,CONNECTION dev | awk -F: '$1=="wifi" {print ($2=="connected" ? $3 : "Disconnected")'}`)
 
 (defpoll bt_status :interval "1s" :initial "blocked"
   "rfkill -rno SOFT,HARD list bluetooth | grep -qw 'blocked' && echo 'blocked' || echo 'unblocked'")
@@ -71,6 +71,7 @@
 
 (defpoll used_ram :interval "1s"
   `free -h | awk '/^Mem:/ {print $3}'`)
+
 
 (defwindow bar
   :monitor 0
@@ -101,9 +102,6 @@
                :prepend-new true))
       (clock)
       (right-modules)))
-
-
-
 
 
 (defwidget desktop-switcher []
@@ -140,17 +138,16 @@
                    :text "${ws}")))))))
 
 
-
-
-
 (defwidget clock []
   (button :class "pill clock-pill"
           :valign "center"
           :onclick "eww open --toggle closer && eww open --toggle calendar"
     time))
 
+
 (defwindow calendar
   :monitor 0
+  :namespace "calendar"
   :geometry (geometry
     :x "0px"
     :y "6px"
@@ -163,15 +160,12 @@
   (cal))
 
 (defwidget cal []
-  (box :class "cal-box"
+  (box :class "popup-box cal-box"
        :orientation "vertical"
     (calendar :class "cal"
               :day {formattime(EWW_TIME, "%d")}
               :month {formattime(EWW_TIME, "%m")}
               :year {formattime(EWW_TIME, "%Y")})))
-
-
-
 
 
 (defwidget right-modules []
@@ -199,7 +193,7 @@
                  :text "${volume <= 0 ? vol_icons.muted :
                             volume < 35 ? vol_icons.low :
                               volume < 70 ? vol_icons.med :
-                                              vol_icons.high}")
+                                            vol_icons.high}")
           (label :class "volume-text"
                  :text "${volume < 0 ? 'Muted' : volume + '%'}"))
 
@@ -211,7 +205,7 @@
           (label :class "brightness-icon"
                  :text "${brightness < 35 ? bri_icons.low :
                             brightness < 70 ? bri_icons.med :
-                                                bri_icons.high}")
+                                              bri_icons.high}")
           (label :class "brightness-text"
                  :text "${brightness}%"))
 
@@ -221,7 +215,7 @@
                               wifi_sig < -70 ? wifi_icons.sig1 :
                                 wifi_sig < -60 ? wifi_icons.sig2 :
                                   wifi_sig < -50 ? wifi_icons.sig3 :
-                                                     wifi_icons.sig4}")
+                                                   wifi_icons.sig4}")
 
         (label :class "bluetooth-icon"
                :text "${bt_status == 'unblocked' ? '󰂯' : '󰂲'}")
@@ -254,11 +248,9 @@
              :text "⏻"))))
 
 
-
-
-
 (defwindow control-menu
   :monitor 0
+  :namespace "control-menu"
   :geometry (geometry
     :x "46px"
     :y "6px"
@@ -268,39 +260,41 @@
   :stacking "overlay"
   :exclusive false
   :focusable "ondemand"
-  (box :class "control-popup"
+  (box :class "popup-box control-popup"
        :orientation "vertical"
-    (box :class "connections"
+       :spacing 12
+    (box :class "popup-section"
          :orientation "vertical"
-         (box :class "wifi-box"
-              :orientation "h"
-              :space-evenly "false"
-              (label :halign "start"
-                     :hexpand "true"
-                     :text `${wifi_stat}`)
-              (label :halign "end"
-                     :text `${round(EWW_NET.wlp192s0.NET_DOWN/1024, 1)}KB/s`)
-              )
-      (label :text "bluetooth device name"))
-    (box :class "stats"
+         :spacing 6
+      (label :class "section-header" :halign "start" :text "Connectivity")
+      (box :class "wifi-box"
+           :orientation "horizontal"
+           :space-evenly "false"
+           (label :halign "start"
+                  :hexpand "true"
+                  :text "󰤨  ${wifi_stat}")
+           (label :halign "end"
+                  :text "󰇚 ${round(EWW_NET.wlp192s0.NET_DOWN/1024, 1)} KB/s"))
+      (label :halign "start" :text "󰂯  Bluetooth: ${bt_status == 'unblocked' ? 'Active' : 'Disabled'}"))
+    
+    (box :class "popup-section"
          :orientation "vertical"
-      (label :text "CPU util, CPU temp")
+         :spacing 6
+      (label :class "section-header" :halign "start" :text "System Status")
       (box :class "ram-display"
-           :orientation "h"
+           :orientation "horizontal"
            :space-evenly "false"
            (label :class "ram-icon"
                   :halign "start"
                   :hexpand "true"
-                  :text "")
+                  :text "  RAM")
            (label :halign "end"
-                  :text "Free: ${free_ram}, Used ${used_ram}")))))
-
-
-
+                  :text "Used: ${used_ram} / Free:${free_ram}")))))
 
 
 (defwindow pwr-menu
   :monitor 0
+  :namespace "pwr-menu"
   :geometry (geometry
     :x "8px"
     :y "6px"
@@ -311,7 +305,7 @@
   :exclusive false
   :focusable "ondemand"
 
-  (box :class "power-popup"
+  (box :class "popup-box power-popup"
        :orientation "vertical"
        :spacing 8
     (button :class "power-option"
@@ -327,10 +321,6 @@
             :onclick "systemctl reboot"
       "${power-icon.reboot}")))
 
-
-
-
-
 (defwidget activate-linux []
   (box :orientation "v"
        :halign "start"
@@ -341,12 +331,8 @@
 (defwindow activate-linux
   :monitor 0
   :stacking "fg"
-  :geometry (geometry :x "16px" :y "48px" :width "250px" :anchor "bottom right")
+  :geometry (geometry :x "26px" :y "48px" :width "250px" :anchor "bottom right")
   (activate-linux))
-
-
-
-
 
 (defwindow closer
   :monitor 0
@@ -355,38 +341,22 @@
   :focusable false
   (eventbox :onclick "eww close calendar control-menu pwr-menu closer && eww update ws_open=false"))
 
-
-
-
-
 (defwindow corner-tl
   :monitor 0
   :geometry (geometry :x "0px" :y "0px" :width "20px" :height "20px" :anchor "top left")
-  :stacking "fg"
-  :exclusive false
-  :focusable false
-  (box :class "corner-tl"))
+  :stacking "fg" :exclusive false :focusable false (box :class "corner-tl"))
 
 (defwindow corner-tr
   :monitor 0
   :geometry (geometry :x "0px" :y "0px" :width "20px" :height "20px" :anchor "top right")
-  :stacking "fg"
-  :exclusive false
-  :focusable false
-  (box :class "corner-tr"))
+  :stacking "fg" :exclusive false :focusable false (box :class "corner-tr"))
 
 (defwindow corner-bl
   :monitor 0
   :geometry (geometry :x "0px" :y "0px" :width "20px" :height "20px" :anchor "bottom left")
-  :stacking "fg"
-  :exclusive false
-  :focusable false
-  (box :class "corner-bl"))
+  :stacking "fg" :exclusive false :focusable false (box :class "corner-bl"))
 
 (defwindow corner-br
   :monitor 0
   :geometry (geometry :x "0px" :y "0px" :width "20px" :height "20px" :anchor "bottom right")
-  :stacking "fg"
-  :exclusive false
-  :focusable false
-  (box :class "corner-br"))
+  :stacking "fg" :exclusive false :focusable false (box :class "corner-br"))

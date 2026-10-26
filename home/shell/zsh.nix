@@ -28,11 +28,8 @@
       ll = "eza -lha --git"; 
       ns = "nix shell";
       q = "exit";
-      sdr = "nh os switch .";      
-      size = "du -sh .";
       ts = "tailscale";
-      vi = "nvim";
-      vim = "nvim";
+      caffeinate = "systemd-inhibit --what=idle sleep infinity";
     };
     
     sessionVariables = {
