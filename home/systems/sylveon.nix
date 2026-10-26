@@ -16,6 +16,7 @@
 
   home.packages = with pkgs; [
     firefox
+    gnome-calculator
   ];
 
   home.pointerCursor = {

@@ -30,6 +30,8 @@
         "col.active_border" = "rgb(${builtins.substring 1 6 accent})";
         "col.inactive_border" = "rgb(444444)";
         layout = "dwindle";
+        resize_on_border = true;
+        extend_border_grab_area = 15;
       };
 
       decoration = {
@@ -70,6 +72,12 @@
 
         repeat_delay = 300;
       };
+
+
+      gesture = [
+        "3, horizontal, move"
+        "3, vertical, move"
+      ];
       
       layerrule = [
         "blur on, ignore_alpha 0.1, match:namespace ^(calendar)$"
@@ -113,7 +121,7 @@
         "$mod ALT, right, swapwindow, r"
 
         # Layout
-        "$mod ALT, space, togglefloating,"
+        "$mod SHIFT, F, togglefloating,"
         "$mod, F, fullscreen,"
 
         # Apps
@@ -135,8 +143,11 @@
         
         "$mod SHIFT, F23, exec, eww open --toggle activate-linux"
 
-        ", XF86Cut, exec, ${pkgs.grimblast}/bin/grimblast copy area"
+        ", XF86Launch7 , exec, ${pkgs.grimblast}/bin/grimblast copy area"
         "$mod SHIFT, S, exec, ${pkgs.grimblast}/bin/grimblast copy area"
+        "$mod, P, exec, ${pkgs.grimblast}/bin/grimblast copy screen"
+
+        ", XF86Calculator, exec, ${pkgs.gnome-calculator}/bin/gnome-calculator"
 
       ];
 
@@ -146,15 +157,22 @@
         "$mod, mouse:273, resizewindow"
       ];
 
-bindel = [
+      bindel = [
         ", XF86MonBrightnessUp, exec, brightnessctl set 5%+ && eww update brightness=$(brightnessctl -m | cut -d, -f4 | tr -d %)"
         ", XF86MonBrightnessDown, exec, brightnessctl set 5%- && eww update brightness=$(brightnessctl -m | cut -d, -f4 | tr -d %)"
         ", XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+ && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')"
         ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')"
+
+        ", XF86PowerOff, exec, sh -c 'if eww active-windows | grep -q 'pwr-menu'; then eww close pwr-menu closer || true; else eww close calendar control-menu || true; eww open closer; eww open pwr-menu; fi'"
       ];
       bindl = [
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')"
         ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+      ];
+
+       windowrule = [
+        "match:class org.gnome.Calculator, float on"
+        "match:class org.gnome.Calculator, size 400 550"
       ];
     };
   };

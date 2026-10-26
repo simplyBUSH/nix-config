@@ -56,6 +56,10 @@ $gap: 8px;
   font-size: 20px;
 }
 
+.nixos-logo {
+  padding-right: 4px;
+}
+
 .ws-list {
   margin-left: 4px;
 }
@@ -89,6 +93,7 @@ $gap: 8px;
 }
 
 .control-pill {
+  min-width: 284px;
   padding: 0px 12px;
   transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
 
@@ -98,15 +103,8 @@ $gap: 8px;
   }
 }
 
-.anim-box {
-  transition: min-width 200ms ease-in-out;
-  &.len-1 { min-width: 42px; }
-  &.len-2 { min-width: 50px; }
-  &.len-3 { min-width: 58px; }
-  &.len-muted { min-width: 68px; }
-  &.len-bat-1 { min-width: 58px; }
-  &.len-bat-2 { min-width: 66px; }
-  &.len-bat-3 { min-width: 74px; }
+.control-popup {
+  min-width: 284px;
 }
 
 .volume-icon,
@@ -135,6 +133,15 @@ $gap: 8px;
   font-weight: 500;
 }
 
+.volume-text {
+  min-width: 42px;
+}
+
+.brightness-text,
+.battery-text {
+  min-width: 36px;
+}
+
 .pwr-icon {
   padding: 0px;
   margin: 0px;
@@ -148,6 +155,11 @@ $gap: 8px;
   padding: 12px;
 }
 
+.power-popup {
+  padding: 20px;
+  border-radius: 20px;
+}
+
 .cal {
   background-color: transparent; 
 }
@@ -159,8 +171,11 @@ $gap: 8px;
 }
 
 .power-option {
-  font-size: 28px;
-  border-radius: 8px;
+  font-size: 48px;
+  min-width: 100px;
+  min-height: 90px;
+  border-radius: 16px;
+  padding: 0px;
   transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
 
   &:hover {
@@ -169,10 +184,32 @@ $gap: 8px;
   }
 }
 
+.power-glyph {
+  padding: 0px;
+  margin: 0px;
+}
+
+.lock-glyph {
+  padding-right: 8px;
+}
+
+.sleep-glyph {
+  padding-right: 8px;
+}
+
+.shutdown-glyph {
+  padding-right: 10px;
+}
+
+.reboot-glyph {
+  padding-right: 8px;
+}
+
 .activate-linux {
   color: rgba(250, 250, 250, 0.7);
 }
 
+.cpu-icon,
 .ram-icon {
   font-size: 14px;
 }

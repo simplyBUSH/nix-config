@@ -123,7 +123,7 @@ in
     logind.settings.Login = {
       HandleLidSwitch = "suspend-then-hibernate";
       HandleLidSwitchExternalPower = "suspend-then-hibernate";
-      HandlePowerKey = "suspend-then-hibernate";
+      HandlePowerKey = "ignore";
   };
 
     udev.packages = with pkgs; [
