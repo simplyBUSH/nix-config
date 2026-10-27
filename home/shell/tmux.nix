@@ -42,10 +42,10 @@
       # COLOR CONFIGS
       %hidden ACCENT="${accent}"
       %hidden GREY="#b6b8bb"
-      %hidden DARK="#0c0c0c"
+      %hidden DARK="#000000"
 
       set -g popup-style "bg=$DARK,fg=$DARK"
-      set -g popup-border-style "fg=$ACCENT,bg=$DARK"
+      set -g popup-border-style "fg=$ACCENT,bg=$GREY"
       
       set -g mode-style "fg=$DARK,bg=$GREY"
       set -g message-style "fg=$DARK,bg=$GREY"
