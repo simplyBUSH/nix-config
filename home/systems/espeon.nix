@@ -2,8 +2,11 @@
 
 {
   imports = [
-    ../cli
-    ../shell
+    ../cli/hyfetch.nix
+    ../cli/nvim.nix
+    ../cli/yazi.nix
+    ../shell/tmux.nix
+    ../shell/zsh.nix
   ];
 
   targets.genericLinux.enable = true;
@@ -14,7 +17,23 @@
     stateVersion = "26.05";
 
     packages = with pkgs; [
-      # Add any Pi-specific CLI packages here
+        btop
+        curl
+        eza
+        fastfetch
+        fd
+        ffmpeg
+        fzf
+        gping
+        jq
+        mosh
+        ripgrep
+        speedtest-cli
+        tree
+        iw
+        uv
+        wget
+        fend
     ];
   };
 
