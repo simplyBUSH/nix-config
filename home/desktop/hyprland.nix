@@ -38,8 +38,8 @@
         rounding = 0;
         blur = {
           enabled = true;
-          size = 1;
-          passes = 2;
+          size = 4;
+          passes = 1;
           new_optimizations = true;
           noise = 0.04;
         };

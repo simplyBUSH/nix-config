@@ -150,7 +150,7 @@ in
 
     bluetooth = {
       enable = true;
-      powerOnBoot = true;
+      powerOnBoot = false;
     };
 
     uinput.enable = true;
@@ -169,6 +169,8 @@ in
     kernel.sysctl = { "vm.swappiness" = 180; };
     kernelPackages = pkgs.linuxPackages_zen;
     kernelParams = [ "iommu=pt" "amd_iommu=on" ];
+    
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
 
     resumeDevice = "/dev/disk/by-uuid/d8bcb427-2025-4edd-9724-b1dc84413626";
 

@@ -8,6 +8,7 @@
     ../shell
     ../gaming
 #    ../rquickshare.nix
+    ../fun.nix
   ];
 
   home = {
@@ -18,6 +19,7 @@
     packages = with pkgs; [
       firefox
       gnome-calculator
+      rpi-imager
     ];
 
     pointerCursor = {

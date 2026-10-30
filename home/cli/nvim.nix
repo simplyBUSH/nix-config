@@ -10,6 +10,11 @@
     withRuby = false;
     withPython3 = false;
 
+    extraPackages = with pkgs; [
+      basedpyright
+      ruff
+    ];
+
     plugins = with pkgs.vimPlugins; [
 
       {
@@ -43,9 +48,9 @@
       plenary-nvim
 
   {
-      plugin = nvim-lspconfig;
-      type = "lua";
-      config = ''
+        plugin = nvim-lspconfig;
+        type = "lua";
+        config = ''
           local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
           -- Configure clangd using the native vim.lsp.config API
@@ -59,8 +64,28 @@
             },
           })
 
-          -- Enable the server (activates automatically when opening C/C++ files)
-          vim.lsp.enable("clangd")
+          -- Configure basedpyright for Python completions & type checking
+          vim.lsp.config("basedpyright", {
+            capabilities = capabilities,
+            settings = {
+              basedpyright = {
+                analysis = {
+                  autoSearchPaths = true,
+                  useLibraryCodeForTypes = true,
+                  diagnosticMode = "openFilesOnly",
+                  typeCheckingMode = "standard", -- Options: "off", "basic", "standard", "strict"
+                },
+              },
+            },
+          })
+
+          -- Configure ruff for fast Python linting & import sorting
+          vim.lsp.config("ruff", {
+            capabilities = capabilities,
+          })
+
+          -- Enable the servers
+          vim.lsp.enable({ "clangd", "basedpyright", "ruff" })
 
           -- Configure error highlights and the floating error box
           vim.diagnostic.config({
