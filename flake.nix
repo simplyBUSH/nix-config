@@ -7,14 +7,17 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     nix-amd-ai.url = "github:noamsto/nix-amd-ai";
     bnm.url = "github:dopeCape/better-nm";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-
-  outputs = inputs@{ self, nixpkgs, home-manager, nixos-hardware, chaotic, nix-amd-ai, ... }: {
+  outputs = inputs@{ self, nixpkgs, home-manager, nixos-hardware, chaotic, nix-amd-ai, nixos-wsl, ... }: {
     nixosConfigurations."jolteon" = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -49,6 +52,24 @@
         }
       ];
     };
+
+    nixosConfigurations."wsl" = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
+      modules = [
+        nixos-wsl.nixosModules.default
+        ./hosts/wsl
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.users.bush = import ./home/systems/wsl.nix;
+          home-manager.backupFileExtension = "backup";
+        }
+      ];
+    };
+
     homeConfigurations."bush@espeon" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages."aarch64-linux";
       extraSpecialArgs = { inherit inputs; accent = "#8B008B"; };
