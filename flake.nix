@@ -51,7 +51,7 @@
     };
     homeConfigurations."bush@espeon" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages."aarch64-linux";
-      extraSpecialArgs = { inherit inputs; };
+      extraSpecialArgs = { inherit inputs; accent = "#8B008B"; };
       modules = [
         ./home/systems/espeon.nix
       ];
