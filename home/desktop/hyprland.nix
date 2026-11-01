@@ -110,7 +110,7 @@ in
         };
       };
 
-      # Animation curves & leaves (replaces animations.bezier and animations.animation)
+# Animation curves & leaves
       curve = [
         {
           _args = [
@@ -124,15 +124,26 @@ in
             }
           ];
         }
+        {
+          _args = [
+            "linear"
+            {
+              type = "bezier";
+              points = [
+                [ 0.0 0.0 ]
+                [ 1.0 1.0 ]
+              ];
+            }
+          ];
+        }
       ];
 
       animation = [
-        { leaf = "windows"; enabled = true; speed = 4; curve = "ease"; }
-        { leaf = "windowsOut"; enabled = true; speed = 4; curve = "ease"; style = "popin 80%"; }
-        { leaf = "fade"; enabled = true; speed = 4; curve = "ease"; }
-        { leaf = "workspaces"; enabled = true; speed = 3; curve = "ease"; }
+        { leaf = "windows"; enabled = true; speed = 4; bezier = "ease"; }
+        { leaf = "windowsOut"; enabled = true; speed = 4; bezier = "ease"; style = "popin 80%"; }
+        { leaf = "fade"; enabled = true; speed = 4; bezier = "ease"; }
+        { leaf = "workspaces"; enabled = true; speed = 3; bezier = "ease"; style = "slide"; }
       ];
-
       # Trackpad gestures (generates: hl.gesture({ ... }))
       gesture = [
         { fingers = 3; direction = "horizontal"; action = "move"; }
