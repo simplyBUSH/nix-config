@@ -20,6 +20,7 @@
       firefox
       gnome-calculator
       rpi-imager
+      remmina
     ];
 
     pointerCursor = {
