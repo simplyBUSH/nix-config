@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 let
   accent = "#7B97A3";
@@ -15,8 +15,9 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    brightnessctl
     adwsteamgtk
+    android-tools
+    brightnessctl
     efibootmgr
     nh
     pciutils
@@ -76,6 +77,7 @@ in
     tailscale.enable = true;
     tailscale.extraSetFlags = [ "--operator=bush" ];
     tlp.enable = true;
+    fwupd.enable = true;
 
     avahi = {
       enable = true;
