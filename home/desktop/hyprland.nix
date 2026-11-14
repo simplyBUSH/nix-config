@@ -43,7 +43,7 @@ in
             "hyprland.start"
             (lib.generators.mkLuaInline ''
               function()
-                hl.exec_cmd("swaybg -i ${../../resources/pictures/wallpaper.png} -m fill")
+                hl.exec_cmd("swaybg -i ${../../resources/pictures/leashed.png} -m fill")
                 hl.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%")
                 hl.exec_cmd("eww open-many bar corner-tl corner-tr corner-bl corner-br")
               end

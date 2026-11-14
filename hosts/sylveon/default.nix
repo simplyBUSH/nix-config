@@ -137,8 +137,9 @@ in
     enableRedistributableFirmware = true;
     cpu.amd.updateMicrocode = true;
 
+    #ai
     amd-npu = {
-      enable = true;
+      enable = false;
       enableNPU = true;
       enableLemonade = true;
       gpuTarget = "gfx1152";

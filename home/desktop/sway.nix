@@ -19,7 +19,7 @@ in
       # Wallpaper
       output = {
         "*" = {
-          bg = "${../../resources/pictures/wallpaper.png} fill";
+          bg = "${../../resources/pictures/leashed.png} fill";
         };
       };
 

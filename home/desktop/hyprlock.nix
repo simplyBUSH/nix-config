@@ -33,7 +33,7 @@
 
       background = [
         {
-          path = "${../../resources/pictures/leashed.jpg}";
+          path = "${../../resources/pictures/leashed_gr.png}";
           blur_passes = 3;
           blur_size = 4;
         }

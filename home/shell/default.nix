@@ -9,6 +9,8 @@
 
   home.packages = with pkgs; [
     antigravity-cli
+    antigravity-ide
+    cool-retro-term
   ];
 
 }
