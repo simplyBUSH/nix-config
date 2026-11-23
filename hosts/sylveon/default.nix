@@ -28,7 +28,8 @@ in
     "flakes"
   ];
 
-
+  virtualisation.docker.enable = true;
+  
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "26.05";
   networking = {
@@ -40,7 +41,7 @@ in
 
   users.users.bush = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "input" "uinput" "render" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "input" "uinput" "render" "docker"];
     home = "/home/bush";
     shell = pkgs.zsh;
   };
@@ -53,10 +54,10 @@ in
   ];
 
   security = {
-    pam.howdy.enable = true;
+#    pam.howdy.enable = true;
     pam.services.hyprlock = {};
-    pam.services.greetd.howdy.enable = false;
-    pam.services.login.howdy.enable = false;
+#    pam.services.greetd.howdy.enable = false;
+#    pam.services.login.howdy.enable = false;
   };
 
   programs = {
@@ -83,10 +84,10 @@ in
       enable = true;
       nssmdns4 = true;
       openFirewall = true;
-  };
+    };
 
     howdy = {
-      enable = true;
+      enable = false;
       control = "sufficient";
       settings.video.dark_threshold = 85;
     };
@@ -126,7 +127,7 @@ in
       HandleLidSwitch = "suspend-then-hibernate";
       HandleLidSwitchExternalPower = "suspend-then-hibernate";
       HandlePowerKey = "ignore";
-  };
+    };
 
     udev.packages = with pkgs; [
       brightnessctl
