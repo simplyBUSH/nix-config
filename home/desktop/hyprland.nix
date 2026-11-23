@@ -45,7 +45,7 @@ in
               function()
                 hl.exec_cmd("swaybg -i ${../../resources/pictures/leashed.png} -m fill")
                 hl.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%")
-                hl.exec_cmd("eww open-many bar corner-tl corner-tr corner-bl corner-br")
+                hl.exec_cmd("sh -c 'eww kill 2>/dev/null; eww open-many bar corner-tl corner-tr corner-bl corner-br'")
               end
             '')
           ];
@@ -103,6 +103,7 @@ in
           sensitivity = if osConfig.networking.hostName == "sylveon" then -0.1 else -0.5;
           touchpad = {
             scroll_factor = 0.5;
+            clickfinger_behavior = true;
           };
           kb_layout = "pl";
           repeat_rate = 50;
@@ -110,7 +111,7 @@ in
         };
       };
 
-# Animation curves & leaves
+      # Animation curves & leaves
       curve = [
         {
           _args = [
@@ -144,6 +145,7 @@ in
         { leaf = "fade"; enabled = true; speed = 4; bezier = "ease"; }
         { leaf = "workspaces"; enabled = true; speed = 3; bezier = "ease"; style = "slide"; }
       ];
+
       # Trackpad gestures (generates: hl.gesture({ ... }))
       gesture = [
         { fingers = 3; direction = "horizontal"; action = "move"; }
@@ -152,9 +154,11 @@ in
 
       # Layer rules (generates: hl.layer_rule({ ... }))
       layer_rule = [
+        { match = { namespace = "^(bar)$"; }; blur_popups = true; ignore_alpha = 0.1; }
         { match = { namespace = "^(calendar)$"; }; blur = true; ignore_alpha = 0.1; }
         { match = { namespace = "^(control-menu)$"; }; blur = true; ignore_alpha = 0.1; }
         { match = { namespace = "^(pwr-menu)$"; }; blur = true; ignore_alpha = 0.1; }
+        { match = { namespace = "^(wofi)$"; }; blur = true; ignore_alpha = 0.1; }
       ];
 
       # Window rules (generates: hl.window_rule({ ... }))
@@ -219,8 +223,19 @@ in
           (mkBind ''mod .. " + SHIFT + Q"'' ''hl.dsp.window.kill()'')
 
           # Session & Eww
-          (mkBind ''mod .. " + L"'' ''hl.dsp.exec_cmd("pkill hyprland")'')
+          (mkBind ''mod .. " + L"'' ''hl.dsp.exec_cmd("hyprlock")'')
+          (mkBind ''mod .. " + SHIFT + L"'' ''hl.dsp.exec_cmd("pkill hyprland")'')
           (mkBind ''mod .. " + SHIFT + F23"'' ''hl.dsp.exec_cmd("eww open --toggle activate-linux")'')
+          (mkBindFlags ''"Escape"'' ''
+            function()
+              local f = io.open("/tmp/eww-popup-open", "r")
+              if f then
+                f:close()
+                os.remove("/tmp/eww-popup-open")
+                hl.exec_cmd("eww close calendar control-menu pwr-menu closer || true")
+              end
+            end
+          '' { non_consuming = true; })
 
           # Screenshots & Calculator
           (mkBind ''"XF86Launch7"'' ''hl.dsp.exec_cmd("${pkgs.grimblast}/bin/grimblast copy area")'')
@@ -237,7 +252,7 @@ in
           (mkBindFlags ''"XF86MonBrightnessDown"'' ''hl.dsp.exec_cmd([[brightnessctl set 5%- && eww update brightness=$(brightnessctl -m | cut -d, -f4 | tr -d %)]])'' { repeating = true; locked = true; })
           (mkBindFlags ''"XF86AudioRaiseVolume"'' ''hl.dsp.exec_cmd([[wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+ && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')]])'' { repeating = true; locked = true; })
           (mkBindFlags ''"XF86AudioLowerVolume"'' ''hl.dsp.exec_cmd([[wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')]])'' { repeating = true; locked = true; })
-          (mkBindFlags ''"XF86PowerOff"'' ''hl.dsp.exec_cmd([[if eww active-windows | grep -q 'pwr-menu'; then eww close pwr-menu closer || true; else eww close calendar control-menu || true; eww open closer; eww open pwr-menu; fi]])'' { repeating = true; locked = true; })
+          (mkBindFlags ''"XF86PowerOff"'' ''hl.dsp.exec_cmd([[if eww active-windows | grep -q 'pwr-menu'; then rm -f /tmp/eww-popup-open; eww close pwr-menu closer || true; else eww close calendar control-menu || true; touch /tmp/eww-popup-open; eww open closer; eww open pwr-menu; fi]])'' { repeating = true; locked = true; })
 
           # Locked media binds (replaces bindl via { locked = true })
           (mkBindFlags ''"XF86AudioMute"'' ''hl.dsp.exec_cmd([[wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && eww update volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print (/MUTED/ ? -1 : int($2 * 100))}')]])'' { locked = true; })

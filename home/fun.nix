@@ -9,6 +9,5 @@
     cl-wordle
     pong3d
     benhsm-minesweeper
-    _4d-minesweeper
   ];
 }

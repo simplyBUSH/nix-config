@@ -20,24 +20,24 @@
 }')
 
 (defvar wifi_icons '{
-  "off": "󰤮", 
-  "sig0": "󰤯", 
-  "sig1": "󰤟", 
-  "sig2": "󰤢", 
-  "sig3": "󰤥", 
+  "off": "󰤮",
+  "sig0": "󰤯",
+  "sig1": "󰤟",
+  "sig2": "󰤢",
+  "sig3": "󰤥",
   "sig4": "󰤨"
 }')
 
 (defvar vol_icons '{
-  "muted": "󰝟", 
-  "low": "󰕿", 
-  "med": "󰖀", 
+  "muted": "󰝟",
+  "low": "󰕿",
+  "med": "󰖀",
   "high": "󰕾"
 }')
 
 (defvar bri_icons '{
-  "low": "󰃞", 
-  "med": "󰃟", 
+  "low": "󰃞",
+  "med": "󰃟",
   "high": "󰃠"
 }')
 
@@ -57,6 +57,9 @@
 (defpoll time :interval "1s"
   `date "+%a %d %b  %H:%M"`)
 
+(defpoll wifi_enabled :interval "1s" :initial "enabled"
+  "nmcli radio wifi")
+
 (defpoll wifi_sig :interval "1s" :initial "-100"
   "iw dev wlp192s0 link | awk '/signal:/ {s=$2} END {print s ? s : -100}'")
 
@@ -75,6 +78,7 @@
 
 (defwindow bar
   :monitor 0
+  :namespace "bar"
   :geometry (geometry
     :x "0%"
     :y "0px"
@@ -131,7 +135,7 @@
           (button :class "ws-num ${desktop == ws ? 'active' : ''}"
                   :halign "center"
                   :valign "center"
-                  :onclick "hyprctl dispatch workspace ${ws} && eww update desktop=${ws}"
+                  :onclick "hyprctl -i 0 dispatch 'hl.dsp.focus({ workspace = ${ws} })' && eww update desktop=${ws}"
             (label :halign "center"
                    :valign "center"
                    :xalign 0.5
@@ -142,7 +146,7 @@
 (defwidget clock []
   (button :class "pill clock-pill"
           :valign "center"
-          :onclick "if eww active-windows | grep -q 'calendar'; then eww close calendar closer || true; else eww close control-menu pwr-menu || true; eww open closer; eww open calendar; fi"
+          :onclick "if eww active-windows | grep -q 'calendar'; then rm -f /tmp/eww-popup-open; eww close calendar closer || true; else eww close control-menu pwr-menu || true; touch /tmp/eww-popup-open; eww open closer; eww open calendar; fi"
     time))
 
 
@@ -152,21 +156,18 @@
   :geometry (geometry
     :x "0px"
     :y "6px"
-    :width "220px"
-    :height "160px"
+    :width "230px"
+    :height "256px"
     :anchor "top center")
   :stacking "overlay"
   :exclusive false
-  :focusable "ondemand"
+  :focusable "exclusive"
   (cal))
 
 (defwidget cal []
   (box :class "popup-box cal-box"
        :orientation "vertical"
-    (calendar :class "cal"
-              :day {formattime(EWW_TIME, "%d")}
-              :month {formattime(EWW_TIME, "%m")}
-              :year {formattime(EWW_TIME, "%Y")})))
+    (calendar :class "cal")))
 
 
 (defwidget right-modules []
@@ -179,7 +180,7 @@
 
     (button :class "pill control-pill"
             :valign "center"
-            :onclick "if eww active-windows | grep -q 'control-menu'; then eww close control-menu closer || true; else eww close calendar pwr-menu || true; eww open closer; eww open control-menu; fi"
+            :onclick "if eww active-windows | grep -q 'control-menu'; then rm -f /tmp/eww-popup-open; eww close control-menu closer || true; else eww close calendar pwr-menu || true; touch /tmp/eww-popup-open; eww open closer; eww open control-menu; fi"
       (box :orientation "horizontal"
            :space-evenly false
            :halign "center"
@@ -191,6 +192,7 @@
              :valign "center"
              :spacing 8
           (label :class "volume-icon"
+                 :xalign 0.5
                  :text "${volume <= 0 ? vol_icons.muted :
                             volume < 35 ? vol_icons.low :
                               volume < 70 ? vol_icons.med :
@@ -202,8 +204,9 @@
         (box :orientation "horizontal"
              :space-evenly false
              :valign "center"
-             :spacing 6
+             :spacing 8
           (label :class "brightness-icon"
+                 :xalign 0.5
                  :text "${brightness < 35 ? bri_icons.low :
                             brightness < 70 ? bri_icons.med :
                                               bri_icons.high}")
@@ -241,7 +244,7 @@
     (button :class "circle-btn pwr"
             :halign "center"
             :valign "center"
-            :onclick "if eww active-windows | grep -q 'pwr-menu'; then eww close pwr-menu closer || true; else eww close calendar control-menu || true; eww open closer; eww open pwr-menu; fi"
+            :onclick "if eww active-windows | grep -q 'pwr-menu'; then rm -f /tmp/eww-popup-open; eww close pwr-menu closer || true; else eww close calendar control-menu || true; touch /tmp/eww-popup-open; eww open closer; eww open pwr-menu; fi"
       (label :class "pwr-icon"
              :halign "center"
              :valign "center"
@@ -257,48 +260,93 @@
     :x "46px"
     :y "6px"
     :width "308px"
-    :height "160px"
+    :height "180px"
     :anchor "top right")
   :stacking "overlay"
   :exclusive false
-  :focusable "ondemand"
+  :focusable "exclusive"
   (box :class "popup-box control-popup"
        :orientation "vertical"
        :spacing 12
     (box :class "popup-section"
          :orientation "vertical"
-         :spacing 6
+         :spacing 8
       (label :class "section-header" :halign "start" :text "Connectivity")
+
       (box :class "wifi-box"
            :orientation "horizontal"
-           :space-evenly "false"
+           :space-evenly false
+           :valign "center"
+           :spacing 8
+        (button :class "toggle-btn ${wifi_enabled == 'enabled' ? 'active' : 'off'}"
+                :halign "center"
+                :valign "center"
+                :onclick "(nmcli radio wifi | grep -qx enabled && nmcli radio wifi off || nmcli radio wifi on) && eww poll wifi_enabled wifi_stat wifi_sig"
+          (label :class "status-glyph wifi-glyph"
+                 :xalign 0.5
+                 :yalign 0.5
+                 :text "${wifi_enabled == 'enabled' ? (wifi_sig <= -100 ? wifi_icons.sig0 : wifi_icons.sig4) : wifi_icons.off}"))
         (label :halign "start"
-               :hexpand "true"
-               :text "󰤨  ${wifi_stat}")
-        (label :halign "end"
-               :text "󰇚 ${round(EWW_NET.wlp192s0.NET_DOWN/1024, 1)} KB/s"))
-      (label :halign "start" :text "󰂯  Bluetooth: ${bt_status == 'unblocked' ? 'Active' : 'Disabled'}"))
-    
+               :hexpand true
+               :text "${wifi_enabled == 'enabled' ? wifi_stat : 'Disabled'}")
+        (box :orientation "horizontal"
+             :space-evenly false
+             :valign "center"
+             :spacing 6
+          (label :class "dl-icon" :xalign 0.5 :text "󰇚")
+          (label :halign "end"
+                 :text "${round(EWW_NET.wlp192s0.NET_DOWN/1024, 1)} KB/s")))
+
+      (box :class "bt-box"
+           :orientation "horizontal"
+           :space-evenly false
+           :valign "center"
+           :spacing 8
+        (button :class "toggle-btn ${bt_status == 'unblocked' ? 'active' : 'off'}"
+                :halign "center"
+                :valign "center"
+                :onclick "rfkill toggle bluetooth && eww poll bt_status"
+          (label :class "status-glyph"
+                 :xalign 0.5
+                 :yalign 0.5
+                 :text "${bt_status == 'unblocked' ? '󰂯' : '󰂲'}"))
+        (label :halign "start"
+               :text "Bluetooth: ${bt_status == 'unblocked' ? 'Active' : 'Disabled'}")))
+
     (box :class "popup-section"
          :orientation "vertical"
-         :spacing 6
+         :spacing 8
       (label :class "section-header" :halign "start" :text "System Status")
+
       (box :class "cpu-display"
            :orientation "horizontal"
-           :space-evenly "false"
-        (label :class "cpu-icon"
-               :halign "start"
-               :hexpand "true"
-               :text "  CPU")
+           :space-evenly false
+           :valign "center"
+           :spacing 8
+        (label :class "status-icon cpu-icon"
+               :halign "center"
+               :valign "center"
+               :xalign 0.5
+               :text "")
+        (label :halign "start"
+               :hexpand true
+               :text "CPU")
         (label :halign "end"
                :text "${round(EWW_CPU.avg, 1)}%"))
+
       (box :class "ram-display"
            :orientation "horizontal"
-           :space-evenly "false"
-        (label :class "ram-icon"
-               :halign "start"
-               :hexpand "true"
-               :text "  RAM")
+           :space-evenly false
+           :valign "center"
+           :spacing 8
+        (label :class "status-icon ram-icon"
+               :halign "center"
+               :valign "center"
+               :xalign 0.5
+               :text "")
+        (label :halign "start"
+               :hexpand true
+               :text "RAM")
         (label :halign "end"
                :text "Used: ${used_ram} / Free:${free_ram}")))))
 
@@ -314,14 +362,14 @@
     :anchor "center")
   :stacking "overlay"
   :exclusive false
-  :focusable "ondemand"
+  :focusable "exclusive"
 
   (box :class "popup-box power-popup"
        :orientation "horizontal"
        :space-evenly true
        :spacing 20
     (button :class "power-option"
-            :onclick "(eww close pwr-menu closer || true) && sleep 0.1 && hyprctl dispatch exec hyprlock &"
+            :onclick "rm -f /tmp/eww-popup-open; (eww close pwr-menu closer || true) && sleep 0.15 && (pidof hyprlock || hyprlock)"
       (label :class "power-glyph lock-glyph"
              :halign "center"
              :valign "center"
@@ -329,7 +377,7 @@
              :yalign 0.5
              :text "${power-icon.lock}"))
     (button :class "power-option"
-            :onclick "(eww close pwr-menu closer || true) && systemctl suspend"
+            :onclick "rm -f /tmp/eww-popup-open; (eww close pwr-menu closer || true) && systemctl suspend"
       (label :class "power-glyph sleep-glyph"
              :halign "center"
              :valign "center"
@@ -337,7 +385,7 @@
              :yalign 0.5
              :text "${power-icon.sleep}"))
     (button :class "power-option"
-            :onclick "(eww close pwr-menu closer || true) && systemctl hibernate"
+            :onclick "rm -f /tmp/eww-popup-open; (eww close pwr-menu closer || true) && systemctl hibernate"
       (label :class "power-glyph shutdown-glyph"
              :halign "center"
              :valign "center"
@@ -345,7 +393,7 @@
              :yalign 0.5
              :text "${power-icon.shutdown}"))
     (button :class "power-option"
-            :onclick "(eww close pwr-menu closer || true) && systemctl reboot"
+            :onclick "rm -f /tmp/eww-popup-open; (eww close pwr-menu closer || true) && systemctl reboot"
       (label :class "power-glyph reboot-glyph"
              :halign "center"
              :valign "center"
@@ -371,7 +419,7 @@
   :geometry (geometry :width "100%" :height "100%")
   :stacking "fg"
   :focusable false
-  (eventbox :onclick "eww close calendar control-menu pwr-menu closer || true"))
+  (eventbox :onclick "rm -f /tmp/eww-popup-open; eww close calendar control-menu pwr-menu closer || true"))
 
 (defwindow corner-tl
   :monitor 0
