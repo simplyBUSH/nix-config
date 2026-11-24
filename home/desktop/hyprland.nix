@@ -1,4 +1,4 @@
-{ lib, pkgs, accent, osConfig, ... }:
+{input, lib, pkgs, accent, osConfig, ... }:
 
 let
   mkBind = keys: dispatcher: {
@@ -222,10 +222,13 @@ in
           (mkBind ''mod .. " + Q"'' ''hl.dsp.window.close()'')
           (mkBind ''mod .. " + SHIFT + Q"'' ''hl.dsp.window.kill()'')
 
+          # Gemini screenshot capture
+          (mkBind ''mod .. " + SHIFT + F23"'' ''hl.dsp.exec_cmd("/nix/store/5ci0gp7vb32qlwvqi1hbmc993nlmxy7w-screenai-0.1.0/bin/screenai --trigger")'')
+          (mkBind ''mod .. " + B"'' ''hl.dsp.exec_cmd("/nix/store/5ci0gp7vb32qlwvqi1hbmc993nlmxy7w-screenai-0.1.0/bin/screenai --trigger")'')
+
           # Session & Eww
           (mkBind ''mod .. " + L"'' ''hl.dsp.exec_cmd("hyprlock")'')
           (mkBind ''mod .. " + SHIFT + L"'' ''hl.dsp.exec_cmd("pkill hyprland")'')
-          (mkBind ''mod .. " + SHIFT + F23"'' ''hl.dsp.exec_cmd("eww open --toggle activate-linux")'')
           (mkBindFlags ''"Escape"'' ''
             function()
               local f = io.open("/tmp/eww-popup-open", "r")

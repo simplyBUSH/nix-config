@@ -5,6 +5,7 @@
     prismlauncher
     protonplus
     olympus
+    adwsteamgtk
   #  r2modman
   ];
 }

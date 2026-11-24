@@ -6,8 +6,5 @@
     cbonsai
     asciiquarium
     byobu
-    cl-wordle
-    pong3d
-    benhsm-minesweeper
   ];
 }
